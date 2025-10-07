@@ -174,8 +174,7 @@ const Login = () => {
     setLoading(true);
     setMessage('');
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
-      const data = await apiFetch(`${API_URL}/api/login`, {
+      const data = await apiFetch('http://localhost:5000/api/login', {
         method: 'POST',
         body: JSON.stringify({ username, password }),
       });
