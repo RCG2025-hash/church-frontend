@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { FaCalendarAlt, FaSearch, FaFilter, FaGoogle, FaDownload, FaCalendarPlus, FaTimes } from "react-icons/fa";
 import women_con from "../assets/women_con.jpg";
-import jacobian from "../assets/jacobian_img.jpg";
+import jacobian from "../assets/Jacobian_img.jpg";
 import men_con from "../assets/Mens_main_con.jpg";
 import youth_con from "../assets/youth_con.jpg";
 import church_con from "../assets/church_con.jpg";
