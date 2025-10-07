@@ -12,6 +12,12 @@ build
 dist
 .env
 .DS_Store
+*.zip
+*.mp4
+*.mov
+*.avi
+*.mp3
+*.psd
 dist-ssr
 *.local
 
