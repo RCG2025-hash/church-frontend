@@ -32,7 +32,8 @@ const Contact = () => {
     setStatus('Submitting...');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/submissions/contact', formData);
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await axios.post(`${API_URL}/api/submissions/contact`, formData);
       console.log('Success:', response.data);
       setStatus('success');
       
@@ -40,7 +41,6 @@ const Contact = () => {
       setTimeout(() => {
         setStatus('');
       }, 5000);
-      
       setFormData({ name: '', email: '', message: '' }); // Clear form
     } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message);

@@ -40,7 +40,9 @@ const NewMember = () => {
     setStatus('Submitting...');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/submissions/new-member', formData);
+      const API_URL = import.meta.env.VITE_API_URL;
+      // const response = await axios.post('http://localhost:5000/api/submissions/new-member', formData);
+      const response = await axios.post(`${API_URL}/api/submissions/new-member`, formData);
       console.log('New member information submitted successfully:', response.data);
       setStatus('success');
       
