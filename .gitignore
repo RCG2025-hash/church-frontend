@@ -47,4 +47,4 @@ Thumbs.db
 # Keep all images and videos inside assets/
 # (so remove *.mp4, *.mov, *.avi, *.mp3 from ignore list)
 # Assets folder should stay tracked
-!src/assets/**
+
