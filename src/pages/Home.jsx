@@ -189,7 +189,7 @@ function Home() {
           >
             <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Welcome to Reconciliation Church of God</h2>
             <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto text-justify">
+            <p className="text-xl text-gray-600 mx-auto text-justify">
              Welcome to the website of Reconciliation Church of God Intl. This is a Full Pentecostal Church with major assignment in the Preaching of the Word of Grace as the pathway for reconciling the lost children of the Most High God back to Him. Our major focus is in looking for those who have backslided or have not known Him at all and use the provisions of the scriptures, as contained in the Gospel of Jesus Christ, to bring about a reunion and foster a flourishing relationship with Him thereafter. 
             We believe that no matter how terribly a man has walked in the past, God has the ability to receive him back as long as the very simple condition of sincere repentance and forsaking of sin can be met. We believe that the most appropriate place to receive and be restored into one's Honour is in The Father's House.
             As you read this piece, if you are in any way out of Favour or Honour, like that prodigal son, I like you to know that God, your Father, is waiting with an outstretched arms to receive you back and restore your dignity.
