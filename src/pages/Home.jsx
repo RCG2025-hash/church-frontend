@@ -97,7 +97,7 @@ function Home() {
     }}
     className="px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-md transition-colors"
   >
-    Join Us This Sunday
+    Join Us
   </button>
   <button 
     onClick={() => {
@@ -122,30 +122,42 @@ function Home() {
     <div className="grid md:grid-cols-3 gap-8">
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Sunday Worship</h3>
+        <p className="text-gray-600">Sunday School</p>
          <p className="text-amber-600 font-medium">8:00 AM - 8:30 AM</p>
-        <p className="text-gray-600 mt-2 mb-4">Sunday School</p>
 
+       <p className="text-gray-600 mt-5">Sunday Service</p>
         <p className="text-amber-600 font-medium">8:30 AM - 11:30 AM</p>
-        <p className="text-gray-600 mt-2">Sunday Service</p>
       </div>
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Tuesday Bible Study</h3>
-        <p className="text-amber-600 font-medium">6:00 PM - 7:30 PM</p>
         <p className="text-gray-600 mt-2">Word Power Impartation</p>
+        <p className="text-amber-600 font-medium">6:00 PM - 7:30 PM</p>
       </div>
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Wednesday</h3>
+        <p className="text-gray-600 mt-2">Waiting Fathers & Mothers of Nations</p>
         <p className="text-amber-600 font-medium">8:00 AM - 11:00 AM</p>
-        <p className="text-gray-600 mt-2 mb-4">Waiting Fathers & Mothers of Nations</p>
+        <p className="text-gray-600 mt-5">Prayer Warriors Intercession Hour</p>
          <p className="text-amber-600 font-medium">4:00 PM</p>
-        <p className="text-gray-600">Prayer Warriors Intercession Hour</p>
-          <p className="text-amber-600 font-medium mt-2">5:00 PM</p>
-        <p className="text-gray-600">Workers Fasting & Prayer Meeting</p>
+         <p className="text-gray-600 mt-5">Workers Fasting & Prayer Meeting</p>
+          <p className="text-amber-600 font-medium">5:00 PM - 6:00 PM</p>
       </div>
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Thursday</h3>
+        <p className="text-gray-600 mt-5">Divine Solution Hour</p>
         <p className="text-amber-600 font-medium">8:30 AM - 10:00 AM </p>
-        <p className="text-gray-600 mt-2">Divine Solution Hour</p>
+      </div>
+      <div className="p-6 bg-gray-50 rounded-lg">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Prophetic Early Morning Service (PEMS)</h3>
+        <p className="text-gray-600 mt-4">First Day of Every Month</p>
+        <p className="text-amber-600 font-medium">6:00 AM - 7:00 AM </p>
+        {/* <p className="text-gray-600 mt-4">Evening Service(1st-3rd of the every month)</p>
+        <p className="text-amber-600 font-medium">6:00 PM - 8:00 PM</p> */}
+      </div>
+       <div className="p-6 bg-gray-50 rounded-lg">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Every Month Indoor Revival</h3>
+        <p className="text-gray-600 mt-4">1st, 2nd & 3rd Day Every Month</p>
+        <p className="text-amber-600 font-medium">6:00 PM - 8:00 PM </p>
       </div>
     </div>
     <div className="mt-8">
@@ -247,7 +259,7 @@ function Home() {
               { name: "Children's Ministry", desc: "Nurturing young hearts in faith and love" },
               { name: "Youth Group", desc: "Engaging teens in their spiritual journey" },
               { name: "Good Women", desc: "Supporting and empowering women in faith" },
-              { name: "Good Men", desc: "Building strong men of God" },
+              { name: "Excellent Men", desc: "Building strong men of God" },
               // { name: "Outreach Program", desc: "Serving our local community" },
               { name: "Prayer Ministry", desc: "Growing through the power of prayer" },
             ].map((ministry, index) => (

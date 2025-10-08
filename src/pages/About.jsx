@@ -32,7 +32,7 @@ const About = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Our Story & Mission
+            History
           </motion.h1>
           <motion.p 
             className="text-xl md:text-2xl max-w-3xl mx-auto mb-8"
@@ -119,7 +119,7 @@ const About = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Mission & Vision</h2>
+            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Vision & Mission</h2>
             <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Guided by faith, driven by purpose
@@ -127,25 +127,6 @@ const About = () => {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-12">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="bg-white p-8 rounded-lg shadow-sm"
-            >
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-amber-100 rounded-full mr-4">
-                  <FaHeart className="text-amber-600 text-2xl" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
-              </div>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                To share the love of Christ and build a faith-filled community through worship, discipleship, and outreach. 
-                We are dedicated to the whole work of the Gospel of Christ, helping people walk with God according to His standards.
-              </p>
-            </motion.div>
-
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -160,9 +141,39 @@ const About = () => {
                 <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
-                To be a pathway leading to the eternal home, countering Satan's attempts to lead people astray. 
-                We envision a community where everyone experiences God's grace and finds their purpose in Christ.
+               The vision of this church is to keep seeking the lost and raising them as saints for the kingdom of God. This essentially means working to keep depopulating the kingdom of hell while increasing the population of the Kingdom of God via the preaching of the Gospel of Life as perpetrated and delivered to us by The Lord Jesus Christ Himself.
               </p>
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="bg-white p-8 rounded-lg shadow-sm"
+            >
+              <div className="flex items-center mb-6">
+                <div className="p-3 bg-amber-100 rounded-full mr-4">
+                  <FaHeart className="text-amber-600 text-2xl" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
+              </div>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                To actualize our vision of populating the kingdom of God and depopulating hell, we have identified and pursuing the following missions:
+              </p>
+              <ol className="list-disc list-inside mt-1 text-lg text-gray-700 leading-relaxed text-justify">
+                <li>
+                  Regular Outreaches via Quarterly Open Air Crusades
+                </li>
+                <li>
+                  Weekly Street-Wise Evangelism Rally with TRACTS sharing.
+                </li>
+                <li>
+                  Regular Ministers Conference for raising and equipping ministers of the Gospel, especially for our ministry.
+                </li>
+                <li>
+                  Use of Regular Welfare Package distribution as means of showing God's mercy and attracting souls to the church for eventual conversion.
+                </li>
+              </ol>
             </motion.div>
           </div>
         </div>
@@ -223,7 +234,7 @@ const About = () => {
             <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Church Family</h2>
             <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Moments of worship, fellowship, and service
+              Moments of worship, fellowship and service
             </p>
           </motion.div>
 
