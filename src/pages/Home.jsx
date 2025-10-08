@@ -119,7 +119,7 @@ function Home() {
 <section id="service-times" className="py-16 bg-white">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h2 className="text-3xl font-bold text-gray-900 font-serif mb-8">Service Times</h2>
-    <div className="grid md:grid-cols-3 gap-3">
+    <div className="grid md:grid-cols-4 gap-3">
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Sunday Worship</h3>
         <p className="text-gray-600">Sunday School</p>
