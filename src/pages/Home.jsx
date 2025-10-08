@@ -119,7 +119,7 @@ function Home() {
 <section id="service-times" className="py-16 bg-white">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h2 className="text-3xl font-bold text-gray-900 font-serif mb-8">Service Times</h2>
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-3">
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Sunday Worship</h3>
         <p className="text-gray-600">Sunday School</p>
@@ -146,6 +146,11 @@ function Home() {
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Thursday</h3>
         <p className="text-gray-600 mt-5">Divine Solution Hour</p>
         <p className="text-amber-600 font-medium">8:30 AM - 10:00 AM </p>
+      </div>
+      <div className="p-6 bg-gray-50 rounded-lg">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Night Vigil</h3>
+        <p className="text-gray-600 mt-5">Every Last Friday of the Month</p>
+        <p className="text-amber-600 font-medium">11:00 PM - 4:00 AM </p>
       </div>
       <div className="p-6 bg-gray-50 rounded-lg">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">Prophetic Early Morning Service (PEMS)</h3>
