@@ -235,7 +235,8 @@ const AdminContactSubmissions = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiFetch('http://localhost:5000/api/submissions/admin/contact');
+       const API_URL = import.meta.env.VITE_API_URL;
+      const data = await apiFetch(`${API_URL}/api/submissions/admin/contact`);
       setSubmissions(data);
     } catch (err) {
       setError(err.message);
@@ -257,7 +258,8 @@ const AdminContactSubmissions = () => {
   const handleDeleteClick = async (id) => {
     if (window.confirm('Are you sure you want to delete this contact submission?')) {
       try {
-        await apiFetch(`http://localhost:5000/api/submissions/admin/contact/${id}`, {
+        const API_URL = import.meta.env.VITE_API_URL;
+        await apiFetch(`${API_URL}/api/submissions/admin/contact/${id}`, {
           method: 'DELETE',
         });
         setSubmissions(submissions.filter(sub => sub._id !== id));
@@ -278,7 +280,8 @@ const AdminContactSubmissions = () => {
     e.preventDefault();
     setEditMessage('Updating...');
     try {
-      const updatedData = await apiFetch(`http://localhost:5000/api/submissions/admin/contact/${currentEditItem._id}`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const updatedData = await apiFetch(`${API_URL}/api/submissions/admin/contact/${currentEditItem._id}`, {
         method: 'PUT',
         body: JSON.stringify(currentEditItem),
       });
@@ -298,7 +301,8 @@ const AdminContactSubmissions = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const updatedData = await apiFetch(`http://localhost:5000/api/submissions/admin/contact/${id}/status`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const updatedData = await apiFetch(`${API_URL}/api/submissions/admin/contact/${id}/status`, {
         method: 'PATCH',
         body: JSON.stringify({ status: newStatus }),
       });
@@ -419,9 +423,10 @@ const AdminNewMemberSubmissions = () => {
 
   const fetchSubmissions = async () => {
     try {
+      const API_URL = import.meta.env.VITE_API_URL;
       setLoading(true);
       setError(null);
-      const data = await apiFetch('http://localhost:5000/api/submissions/admin/new-member');
+      const data = await apiFetch(`${API_URL}/api/submissions/admin/new-member`);
       setSubmissions(data);
     } catch (err) {
       setError(err.message);
@@ -443,7 +448,8 @@ const AdminNewMemberSubmissions = () => {
   const handleDeleteClick = async (id) => {
     if (window.confirm('Are you sure you want to delete this new member submission?')) {
       try {
-        await apiFetch(`http://localhost:5000/api/submissions/admin/new-member/${id}`, {
+        const API_URL = import.meta.env.VITE_API_URL;
+        await apiFetch(`${API_URL}/api/submissions/admin/new-member/${id}`, {
           method: 'DELETE',
         });
         setSubmissions(submissions.filter(sub => sub._id !== id));
@@ -464,7 +470,8 @@ const AdminNewMemberSubmissions = () => {
     e.preventDefault();
     setEditMessage('Updating...');
     try {
-      const updatedData = await apiFetch(`http://localhost:5000/api/submissions/admin/new-member/${currentEditItem._id}`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const updatedData = await apiFetch(`${API_URL}/api/submissions/admin/new-member/${currentEditItem._id}`, {
         method: 'PUT',
         body: JSON.stringify(currentEditItem),
       });
@@ -618,9 +625,10 @@ const AdminWorkforceSubmissions = () => {
 
   const fetchSubmissions = async () => {
     try {
+      const API_URL = import.meta.env.VITE_API_URL;
       setLoading(true);
       setError(null);
-      const data = await apiFetch('http://localhost:5000/api/submissions/admin/workforce');
+      const data = await apiFetch(`${API_URL}/api/submissions/admin/workforce`);
       setSubmissions(data);
     } catch (err) {
       setError(err.message);
@@ -642,7 +650,8 @@ const AdminWorkforceSubmissions = () => {
   const handleDeleteClick = async (id) => {
     if (window.confirm('Are you sure you want to delete this workforce application?')) {
       try {
-        await apiFetch(`http://localhost:5000/api/submissions/admin/workforce/${id}`, {
+        const API_URL = import.meta.env.VITE_API_URL;
+        await apiFetch(`${API_URL}/api/submissions/admin/workforce/${id}`, {
           method: 'DELETE',
         });
         setSubmissions(submissions.filter(sub => sub._id !== id));
@@ -663,7 +672,8 @@ const AdminWorkforceSubmissions = () => {
     e.preventDefault();
     setEditMessage('Updating...');
     try {
-      const updatedData = await apiFetch(`http://localhost:5000/api/submissions/admin/workforce/${currentEditItem._id}`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const updatedData = await apiFetch(`${API_URL}/api/submissions/admin/workforce/${currentEditItem._id}`, {
         method: 'PUT',
         body: JSON.stringify(currentEditItem),
       });
