@@ -160,8 +160,8 @@ function Home() {
         <p className="text-amber-600 font-medium">6:00 PM - 8:00 PM</p> */}
       </div>
        <div className="p-6 bg-gray-50 rounded-lg">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Every Month Indoor Revival</h3>
-        <p className="text-gray-600 mt-4">1st, 2nd & 3rd Day Every Month</p>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">Monthly Revival</h3>
+        <p className="text-gray-600 mt-4">1st-3rd day of the Month</p>
         <p className="text-amber-600 font-medium">6:00 PM - 8:00 PM </p>
       </div>
     </div>
