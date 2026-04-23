@@ -4,7 +4,7 @@ import {
   FaYoutube, 
   FaFacebook, 
   FaInstagram, 
-  FaVideo, 
+  FaTikTok, 
   FaChurch,
   FaClock,
   FaCalendarAlt,
@@ -61,17 +61,17 @@ const Live = () => {
   // }, []);
 
   const streamingPlatforms = [
-    {
-      name: "YouTube",
-      icon: FaYoutube,
-      url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
-      color: "bg-red-600 hover:bg-red-700",
-      description: "Watch our HD stream on YouTube"
-    },
+    // {
+    //   name: "YouTube",
+    //   icon: FaYoutube,
+    //   url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
+    //   color: "bg-red-600 hover:bg-red-700",
+    //   description: "Watch our HD stream on YouTube"
+    // },
     {
       name: "Facebook",
       icon: FaFacebook,
-      url: "https://www.facebook.com/share/1CSuncwTv8/?mibextid=wwXIfr",
+      url: "https://www.facebook.com/share/1CpmwGazKi/",
       color: "bg-blue-600 hover:bg-blue-700",
       description: "Join our Facebook Live stream"
     },
@@ -83,8 +83,8 @@ const Live = () => {
       description: "Follow us on Instagram Live"
     },
     {
-      name: "Zoom",
-      icon: FaVideo,
+      name: "TikTok",
+      icon: FaTikTok,
       url: "",
       color: "bg-blue-500 hover:bg-blue-600",
       description: "Join our interactive Zoom service"
