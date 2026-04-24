@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
+import { FaTiktok } from "react-icons/fa6";
 import { 
   FaYoutube, 
   FaFacebook, 
   FaInstagram, 
-  FaTikTok, 
   FaChurch,
   FaClock,
   FaCalendarAlt,
@@ -61,13 +61,13 @@ const Live = () => {
   // }, []);
 
   const streamingPlatforms = [
-    // {
-    //   name: "YouTube",
-    //   icon: FaYoutube,
-    //   url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
-    //   color: "bg-red-600 hover:bg-red-700",
-    //   description: "Watch our HD stream on YouTube"
-    // },
+    {
+      name: "YouTube",
+      icon: FaYoutube,
+      url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
+      color: "bg-red-600 hover:bg-red-700",
+      description: "Watch our HD stream on YouTube"
+    },
     {
       name: "Facebook",
       icon: FaFacebook,
@@ -84,7 +84,7 @@ const Live = () => {
     },
     {
       name: "TikTok",
-      icon: FaTikTok,
+      icon: FaTiktok,
       url: "",
       color: "bg-blue-500 hover:bg-blue-600",
       description: "Join our interactive Zoom service"
