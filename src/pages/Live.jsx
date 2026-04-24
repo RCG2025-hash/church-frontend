@@ -85,7 +85,7 @@ const Live = () => {
     {
       name: "TikTok",
       icon: FaTiktok,
-      url: "",
+      url: "https://www.tiktok.com/@rcghisgrace?_r=1&_t=ZP-95mCrms8szW",
       color: "bg-blue-500 hover:bg-blue-600",
       description: "Follow us on TikTok"
     }
