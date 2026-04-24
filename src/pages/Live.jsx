@@ -87,7 +87,7 @@ const Live = () => {
       icon: FaTiktok,
       url: "",
       color: "bg-blue-500 hover:bg-blue-600",
-      description: "Join our interactive Zoom service"
+      description: "Follow us on TikTok"
     }
   ];
 
