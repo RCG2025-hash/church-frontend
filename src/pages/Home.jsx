@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import {Link} from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import HomeBanner from "../components/HomeBanner";
 import About from "./About";
@@ -17,6 +19,33 @@ import { FaChurch, FaPrayingHands, FaUsers, FaCalendarAlt, FaHandHoldingHeart,Fa
 function Home() {
   const [scrolling, setScrolling] = useState(false);
   const [selectedMinistry, setSelectedMinistry] = useState(null);
+  const location = useLocation();
+    useEffect(() => {
+
+    if (!location.state?.scrollTo) return;
+
+    const section = document.getElementById(
+        location.state.scrollTo
+    );
+
+    if (section) {
+
+        setTimeout(() => {
+
+            section.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "start",
+
+            });
+
+        }, 200);
+
+    }
+
+}, [location]);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolling(window.scrollY > window.innerHeight * 0.8);
@@ -26,7 +55,6 @@ function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Sample images (replace with your actual images)
   const churchHeroImage = "https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80";
   const pastorsImage = "https://images.unsplash.com/photo-1586083702768-190b052a3f83?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1035&q=80";
   const backgroundImage = "https://images.unsplash.com/photo-1584983311807-3c6081bca0d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80";
@@ -38,14 +66,6 @@ function Home() {
     { icon: FaPrayingHands, number: "15+", label: "Ministries" },
     { icon: FaCalendarAlt, number: "20+", label: "Events Yearly" },
   ];
-
-  // Service times
-  // const serviceTimes = [
-  //   { day: "Sunday Worship", time: "8:00 AM & 10:30 AM" },
-  //   { day: "Bible Study", time: "Wednesday, 6:30 PM" },
-  //   { day: "Prayer Meeting", time: "Friday, 7:00 PM" },
-  //   { day: "Youth Service", time: "Saturday, 4:00 PM" },
-  // ];
 
   return (
     <div className="min-h-screen">

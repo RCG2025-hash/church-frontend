@@ -33,6 +33,7 @@ const Contact = () => {
     
     try {
       const API_URL = import.meta.env.VITE_API_URL;
+      console.log("API URL:", API_URL);
       const response = await axios.post(`${API_URL}/api/submissions/contact`, formData);
       console.log('Success:', response.data);
       setStatus('success');

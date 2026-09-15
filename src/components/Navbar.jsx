@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaChurch } from "react-icons/fa";
 import churchLogo from "../assets/church_logo.png";
 
@@ -25,7 +25,7 @@ function Navbar() {
   const [activeSection, setActiveSection] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -62,19 +62,61 @@ function Navbar() {
   }, [location]);
 
   const scrollToSection = (id) => {
-    if (id === "home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
-      const section = document.getElementById(id);
-      if (section) {
-        const yOffset = -80; // Adjust for navbar height
-        const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: y, behavior: "smooth" });
-      }
-    }
+  // If we're not on the homepage,
+  // go there first and remember the section.
+  if (location.pathname !== "/") {
+
+    navigate("/", {
+      state: {
+        scrollTo: id,
+      },
+    });
+
     setIsOpen(false);
     setDropdownOpen(false);
-  };
+
+    return;
+  }
+
+  if (id === "home") {
+
+    window.scrollTo({
+
+      top: 0,
+
+      behavior: "smooth",
+
+    });
+
+  } else {
+
+    const section = document.getElementById(id);
+
+    if (section) {
+
+      const yOffset = -80;
+
+      const y =
+        section.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+
+      window.scrollTo({
+
+        top: y,
+
+        behavior: "smooth",
+
+      });
+
+    }
+
+  }
+
+  setIsOpen(false);
+  setDropdownOpen(false);
+
+};
 
   const handleMoreClick = (e, id) => {
     e.preventDefault();
