@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from "react";
 import API from "../../services/api";
 import { toast } from "react-toastify";
@@ -9,6 +10,11 @@ import {
   FaTrash,
   FaEdit,
   FaSyncAlt,
+  FaUsers,
+  FaUserPlus,
+  FaInbox,
+  FaTimes,
+  FaBuilding,
 } from "react-icons/fa";
 
 const WorkforceTable = () => {
@@ -17,18 +23,11 @@ const WorkforceTable = () => {
   const [search, setSearch] = useState("");
   const [selectedWorker, setSelectedWorker] = useState(null);
 
-  // ==========================================
-  // Fetch Workforce Applications
-  // ==========================================
-
   useEffect(() => {
     fetchWorkers();
   }, []);
 
-  // ==========================================
-  // Fetch Workers
-  // ==========================================
-
+  // Fetch workforce applications
   const fetchWorkers = async () => {
     try {
       setLoading(true);
@@ -37,187 +36,113 @@ const WorkforceTable = () => {
         "/api/submissions/admin/workforce"
       );
 
-      console.log(
-        "WORKFORCE API RESPONSE:",
-        res.data
-      );
-
       const responseData = res?.data;
-
       let workerList = [];
 
-      // If API directly returns an array
       if (Array.isArray(responseData)) {
         workerList = responseData;
-      }
-
-      // If API returns { data: [...] }
-      else if (
-        Array.isArray(responseData?.data)
-      ) {
+      } else if (Array.isArray(responseData?.data)) {
         workerList = responseData.data;
-      }
-
-      // If API returns { workforce: [...] }
-      else if (
-        Array.isArray(responseData?.workforce)
-      ) {
+      } else if (Array.isArray(responseData?.workforce)) {
         workerList = responseData.workforce;
       }
 
-      console.log(
-        "WORKFORCE ARRAY:",
-        workerList
-      );
-
-      console.log(
-        "IS WORKFORCE ARRAY:",
-        Array.isArray(workerList)
-      );
-
-      // Always store an array
       setWorkers(workerList);
-
     } catch (err) {
-      console.error(
-        "FETCH WORKFORCE ERROR:",
-        err
-      );
-
+      console.error("FETCH WORKFORCE ERROR:", err);
       setWorkers([]);
 
       toast.error(
         err.response?.data?.message ||
           "Unable to load workforce applications."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
-  // ==========================================
-  // Filter Workers
-  // ==========================================
-
+  // Filter workforce applications
   const filteredWorkers = useMemo(() => {
+    const workerList = Array.isArray(workers) ? workers : [];
+    const searchTerm = search.toLowerCase().trim();
 
-    const workerList = Array.isArray(workers)
-      ? workers
-      : [];
+    if (!searchTerm) return workerList;
 
-    const searchTerm = search
-      .toLowerCase()
-      .trim();
-
-    // No search
-    if (!searchTerm) {
-      return workerList;
-    }
-
-    // Search workers
     return workerList.filter((worker) => {
-
-      const name =
-        String(worker?.name || "").toLowerCase();
-
-      const email =
-        String(worker?.email || "").toLowerCase();
-
-      const phoneNumber =
-        String(worker?.phoneNumber || "").toLowerCase();
-
-      const department =
-        String(worker?.department || "").toLowerCase();
+      const name = String(worker?.name || "").toLowerCase();
+      const email = String(worker?.email || "").toLowerCase();
+      const phone = String(worker?.phoneNumber || "").toLowerCase();
+      const department = String(worker?.department || "").toLowerCase();
 
       return (
         name.includes(searchTerm) ||
         email.includes(searchTerm) ||
-        phoneNumber.includes(searchTerm) ||
+        phone.includes(searchTerm) ||
         department.includes(searchTerm)
       );
     });
-
   }, [workers, search]);
 
-  // ==========================================
-  // GUARANTEED ARRAY FOR RENDERING
-  // ==========================================
-
-  const workersToDisplay = Array.isArray(
-    filteredWorkers
-  )
+  const workersToDisplay = Array.isArray(filteredWorkers)
     ? filteredWorkers
     : [];
 
-  // Debugging
-  console.log(
-    "FILTERED WORKERS:",
-    filteredWorkers
-  );
+  // Generate initials for the member avatar
+  const getInitials = (name) => {
+    if (!name) return "W";
 
-  console.log(
-    "WORKERS TO DISPLAY:",
-    workersToDisplay
-  );
+    return name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase();
+  };
 
-  console.log(
-    "IS ARRAY:",
-    Array.isArray(workersToDisplay)
-  );
+  // Format registration date
+  const formatDate = (date) => {
+    if (!date) return "N/A";
 
-  // ==========================================
-  // Delete Workforce Application
-  // ==========================================
+    const parsedDate = new Date(date);
 
+    if (Number.isNaN(parsedDate.getTime())) return "N/A";
+
+    return parsedDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  // Delete workforce application
   const handleDelete = async (id) => {
-
     const confirmDelete = window.confirm(
       "Delete this workforce application permanently?"
     );
 
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirmDelete) return;
 
     try {
-
       await API.delete(
         `/api/submissions/admin/workforce/${id}`
       );
 
-      toast.success(
-        "Workforce application deleted successfully."
+      setWorkers((previousWorkers) =>
+        Array.isArray(previousWorkers)
+          ? previousWorkers.filter((worker) => worker._id !== id)
+          : []
       );
 
-      // Remove deleted worker
-      setWorkers((previousWorkers) => {
-
-        if (!Array.isArray(previousWorkers)) {
-          return [];
-        }
-
-        return previousWorkers.filter(
-          (worker) =>
-            worker._id !== id
-        );
-
-      });
-
-      // Close modal if deleted worker is open
-      if (
-        selectedWorker &&
-        selectedWorker._id === id
-      ) {
+      if (selectedWorker?._id === id) {
         setSelectedWorker(null);
       }
 
-    } catch (err) {
-
-      console.error(
-        "DELETE WORKFORCE ERROR:",
-        err
+      toast.success(
+        "Workforce application deleted successfully."
       );
+    } catch (err) {
+      console.error("DELETE WORKFORCE ERROR:", err);
 
       toast.error(
         err.response?.data?.message ||
@@ -226,314 +151,276 @@ const WorkforceTable = () => {
     }
   };
 
-  // ==========================================
-  // View / Edit Worker
-  // ==========================================
-
-  const handleView = (worker) => {
-    setSelectedWorker(worker);
-  };
-
-  // ==========================================
-  // Refresh
-  // ==========================================
-
+  // Refresh applications
   const handleRefresh = async () => {
-
     await fetchWorkers();
-
-    toast.info(
-      "Workforce applications refreshed."
-    );
+    toast.info("Workforce applications refreshed.");
   };
-
-  // ==========================================
-  // Render
-  // ==========================================
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:p-7">
 
-      {/* ======================================
-          HEADER
-      ====================================== */}
+      {/* Header */}
+      <div className="mb-7 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="h-7 w-1 rounded-full bg-red-600" />
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-600">
+              Administration
+            </p>
+          </div>
 
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
+            Workforce Applications
+          </h2>
 
-        <h2 className="text-2xl font-bold">
-          Workforce Applications
-        </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Review and manage church workforce registrations.
+          </p>
+        </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Search */}
-
-          <div className="relative">
-
-            <FaSearch
-              className="absolute left-3 top-3.5 text-gray-400"
-            />
+          <div className="relative w-full sm:min-w-64">
+            <FaSearch className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-slate-400" />
 
             <input
               type="text"
-              placeholder="Search workforce..."
-              className="pl-10 pr-4 py-2 border rounded-lg w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search name, email, phone..."
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-10 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-red-400 focus:bg-white focus:ring-4 focus:ring-red-500/10 sm:w-72"
             />
 
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-red-600"
+              >
+                <FaTimes />
+              </button>
+            )}
           </div>
 
           {/* Refresh */}
-
           <button
             type="button"
             onClick={handleRefresh}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#101d3a] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1b2d52] disabled:cursor-not-allowed disabled:opacity-60"
           >
-
-            <FaSyncAlt
-              className={
-                loading
-                  ? "animate-spin"
-                  : ""
-              }
-            />
-
-            {loading
-              ? "Loading..."
-              : "Refresh"}
-
+            <FaSyncAlt className={loading ? "animate-spin" : ""} />
+            {loading ? "Loading..." : "Refresh"}
           </button>
-
         </div>
-
       </div>
 
-      {/* ======================================
-          LOADING
-      ====================================== */}
+      {/* Summary cards */}
+      <div className="mb-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#101d3a] text-lg text-white">
+            <FaUsers />
+          </div>
 
-      {loading ? (
-
-        <div className="text-center py-12">
-
-          <FaSyncAlt
-            className="animate-spin text-blue-600 text-3xl mx-auto mb-3"
-          />
-
-          <p className="text-gray-500">
-            Loading workforce applications...
-          </p>
-
+          <div className="min-w-0">
+            <p className="text-sm text-slate-500">
+              Total Applications
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-900">
+              {workers.length.toLocaleString("en-NG")}
+            </p>
+          </div>
         </div>
 
-      ) : (
+        <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-lg text-red-600">
+            <FaUserPlus />
+          </div>
 
+          <div className="min-w-0">
+            <p className="text-sm text-slate-500">
+              Matching Results
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-slate-900">
+              {workersToDisplay.length.toLocaleString("en-NG")}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-hidden rounded-xl border border-slate-200">
         <div className="overflow-x-auto">
-
-          <table className="min-w-full">
-
-            {/* =================================
-                TABLE HEADER
-            ================================= */}
-
+          <table className="w-full min-w-[850px] border-collapse text-left">
             <thead>
-
-              <tr className="bg-gray-100">
-
-                <th className="p-4 text-left">
-                  Name
-                </th>
-
-                <th className="p-4 text-left">
-                  Email
-                </th>
-
-                <th className="p-4 text-left">
-                  Phone
-                </th>
-
-                <th className="p-4 text-left">
-                  Department
-                </th>
-
-                <th className="p-4 text-left">
-                  Registered
-                </th>
-
-                <th className="p-4 text-center">
+              <tr className="bg-[#101d3a] text-xs uppercase tracking-wider text-white">
+                <th className="px-5 py-4 font-semibold">Worker</th>
+                <th className="px-5 py-4 font-semibold">Phone</th>
+                <th className="px-5 py-4 font-semibold">Department</th>
+                <th className="px-5 py-4 font-semibold">Registered</th>
+                <th className="px-5 py-4 text-center font-semibold">
                   Actions
                 </th>
-
               </tr>
-
             </thead>
 
-            {/* =================================
-                TABLE BODY
-            ================================= */}
-
-            <tbody>
-
-              {workersToDisplay.length === 0 ? (
-
+            <tbody className="divide-y divide-slate-100">
+              {loading ? (
                 <tr>
-
-                  <td
-                    colSpan="6"
-                    className="text-center py-10 text-gray-500"
-                  >
-
-                    {search
-                      ? "No workforce applications match your search."
-                      : "No workforce applications found."}
-
+                  <td colSpan="5" className="px-5 py-16 text-center">
+                    <FaSyncAlt className="mx-auto mb-3 animate-spin text-2xl text-red-600" />
+                    <p className="text-sm text-slate-500">
+                      Loading workforce applications...
+                    </p>
                   </td>
-
                 </tr>
+              ) : workersToDisplay.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-5 py-16 text-center">
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-xl text-slate-400">
+                      <FaInbox />
+                    </div>
 
+                    <p className="font-semibold text-slate-700">
+                      {search
+                        ? "No matching applications"
+                        : "No workforce applications yet"}
+                    </p>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                      {search
+                        ? "Try another name, email, phone number, or department."
+                        : "New workforce registrations will appear here."}
+                    </p>
+
+                    {search && (
+                      <button
+                        type="button"
+                        onClick={() => setSearch("")}
+                        className="mt-4 text-sm font-semibold text-red-600 hover:text-red-700"
+                      >
+                        Clear search
+                      </button>
+                    )}
+                  </td>
+                </tr>
               ) : (
-
-                workersToDisplay.map(
-                  (worker) => (
-
-                    <tr
-                      key={worker._id}
-                      className="border-b hover:bg-gray-50"
-                    >
-
-                      {/* Name */}
-
-                      <td className="p-4 font-medium">
-                        {worker?.name || "N/A"}
-                      </td>
-
-                      {/* Email */}
-
-                      <td className="p-4">
-                        {worker?.email || "N/A"}
-                      </td>
-
-                      {/* Phone */}
-
-                      <td className="p-4">
-                        {worker?.phoneNumber || "N/A"}
-                      </td>
-
-                      {/* Department */}
-
-                      <td className="p-4">
-                        {worker?.department || "N/A"}
-                      </td>
-
-                      {/* Registered */}
-
-                      <td className="p-4">
-
-                        {worker?.createdAt
-                          ? new Date(
-                              worker.createdAt
-                            ).toLocaleDateString()
-                          : "N/A"}
-
-                      </td>
-
-                      {/* Actions */}
-
-                      <td className="p-4">
-
-                        <div className="flex justify-center gap-4">
-
-                          {/* VIEW */}
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleView(worker)
-                            }
-                            className="text-blue-600 hover:text-blue-800"
-                            title="View"
-                          >
-
-                            <FaEye />
-
-                          </button>
-
-                          {/* EDIT */}
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleView(worker)
-                            }
-                            className="text-green-600 hover:text-green-800"
-                            title="Edit"
-                          >
-
-                            <FaEdit />
-
-                          </button>
-
-                          {/* DELETE */}
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleDelete(
-                                worker._id
-                              )
-                            }
-                            className="text-red-600 hover:text-red-800"
-                            title="Delete"
-                          >
-
-                            <FaTrash />
-
-                          </button>
-
+                workersToDisplay.map((worker) => (
+                  <tr
+                    key={worker._id}
+                    className="group transition-colors hover:bg-slate-50"
+                  >
+                    {/* Worker details */}
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#101d3a] text-xs font-bold text-white ring-4 ring-slate-100">
+                          {getInitials(worker?.name)}
                         </div>
 
-                      </td>
+                        <div className="min-w-0">
+                          <p className="truncate font-semibold text-slate-800">
+                            {worker?.name || "N/A"}
+                          </p>
+                          <p className="mt-1 max-w-56 truncate text-xs text-slate-500">
+                            {worker?.email || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
 
-                    </tr>
+                    {/* Phone */}
+                    <td className="px-5 py-4 text-sm text-slate-600">
+                      {worker?.phoneNumber || "N/A"}
+                    </td>
 
-                  )
-                )
+                    {/* Department */}
+                    <td className="px-5 py-4">
+                      <span className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
+                        <FaBuilding className="text-red-500" />
+                        {worker?.department || "N/A"}
+                      </span>
+                    </td>
 
+                    {/* Registration date */}
+                    <td className="px-5 py-4 text-sm text-slate-500">
+                      {formatDate(worker?.createdAt)}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedWorker(worker)}
+                          title="View application"
+                          aria-label={`View ${worker?.name || "worker"} application`}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:border-[#101d3a] hover:bg-[#101d3a] hover:text-white"
+                        >
+                          <FaEye />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setSelectedWorker(worker)}
+                          title="Edit application"
+                          aria-label={`Edit ${worker?.name || "worker"} application`}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition hover:border-red-500 hover:bg-red-50 hover:text-red-600"
+                        >
+                          <FaEdit />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(worker._id)}
+                          title="Delete application"
+                          aria-label={`Delete ${worker?.name || "worker"} application`}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-red-600 transition hover:border-red-600 hover:bg-red-600 hover:text-white"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
-
             </tbody>
-
           </table>
-
         </div>
+      </div>
 
+      {/* Footer */}
+      {!loading && workersToDisplay.length > 0 && (
+        <div className="mt-4 flex flex-col gap-2 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            Showing{" "}
+            <span className="font-semibold text-slate-700">
+              {workersToDisplay.length}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-slate-700">
+              {workers.length}
+            </span>{" "}
+            applications
+          </p>
+
+          <p className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-500" />
+            Workforce records
+          </p>
+        </div>
       )}
 
-      {/* ======================================
-          WORKFORCE MODAL
-      ====================================== */}
-
+      {/* Workforce modal */}
       {selectedWorker && (
-
         <WorkforceModal
           workforce={selectedWorker}
-
-          onClose={() =>
-            setSelectedWorker(null)
-          }
-
+          onClose={() => setSelectedWorker(null)}
           onDelete={handleDelete}
-
           refreshWorkforce={fetchWorkers}
         />
-
       )}
-
     </div>
   );
 };

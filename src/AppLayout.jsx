@@ -1,3 +1,4 @@
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -14,106 +15,89 @@ import NewMember from "./pages/NewMember";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Preloader from "./components/Preloader";
+import ScrollToTop from "./components/ScrollToTop";
+import BackToTopButton from "./components/BackToTopButton";
 
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 
 const AppLayout = () => {
   const location = useLocation();
-
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  const isFirstVisit = !sessionStorage.getItem("preloaderShown");
-
-  const [loading, setLoading] = useState(
-    isFirstVisit && !isAdminRoute
+  // Show the preloader on every public page load or refresh.
+  const [showPreloader, setShowPreloader] = useState(
+    () => !isAdminRoute
   );
 
-  /*
-  ==============================
-  PRELOADER
-  ==============================
-  */
+  const [loading, setLoading] = useState(
+    () => !isAdminRoute
+  );
 
+  // Keep the preloader visible for 2.5 seconds.
   useEffect(() => {
-
     if (isAdminRoute) {
       setLoading(false);
+      setShowPreloader(false);
       return;
     }
 
-    if (!isFirstVisit) {
+    if (!showPreloader || !loading) return;
+
+    const timer = window.setTimeout(() => {
       setLoading(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-
-      setLoading(false);
-
-      sessionStorage.setItem(
-        "preloaderShown",
-        "true"
-      );
-
     }, 2500);
 
-    return () => clearTimeout(timer);
+    return () => window.clearTimeout(timer);
+  }, [isAdminRoute, showPreloader, loading]);
 
-  }, [isAdminRoute, isFirstVisit]);
+  // Hide the preloader on admin routes.
+  useEffect(() => {
+    if (isAdminRoute) {
+      setLoading(false);
+      setShowPreloader(false);
+    }
+  }, [isAdminRoute]);
 
-
-  /*
-  ==============================
-  PRELOADER
-  ==============================
-  */
-
-  if (loading) {
-
-    return <Preloader />;
-
-  }
+  // Called after the preloader fade-out animation finishes.
+  const handlePreloaderFinish = () => {
+    setShowPreloader(false);
+  };
 
   return (
     <>
+      {/* Preloader */}
+      {showPreloader && (
+        <Preloader
+          isLoading={loading}
+          onFinish={handlePreloaderFinish}
+        />
+      )}
+
+      {/* Scroll to top when the route changes */}
+      <ScrollToTop />
+
+      {/* Public navbar */}
       {!isAdminRoute && <Navbar />}
 
+      {/* Spacer for the fixed navbar */}
+      {!isAdminRoute && (
+        <div
+          aria-hidden="true"
+          className="h-[76px] sm:h-[84px] lg:h-[76px]"
+        />
+      )}
+
+      {/* Website pages */}
       <Routes>
-
-        {/* PUBLIC */}
-
-        <Route
-          path="/"
-          element={<Home />}
-        />
-
-        <Route
-          path="/about"
-          element={<About />}
-        />
-
-        <Route
-          path="/pastors"
-          element={<Pastors />}
-        />
-
-        <Route
-          path="/events"
-          element={<Events />}
-        />
-
-        <Route
-          path="/live"
-          element={<Live />}
-        />
-
-        <Route
-          path="/donation"
-          element={<Donation />}
-        />
+        {/* PUBLIC ROUTES */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pastors" element={<Pastors />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/live" element={<Live />} />
+        <Route path="/donation" element={<Donation />} />
 
         <Route
           path="/joinworkforce"
@@ -125,13 +109,9 @@ const AppLayout = () => {
           element={<NewMember />}
         />
 
-        <Route
-          path="/contact"
-          element={<Contact />}
-        />
+        <Route path="/contact" element={<Contact />} />
 
-        {/* ADMIN */}
-
+        {/* ADMIN ROUTES */}
         <Route
           path="/adminlogin"
           element={<AdminLogin />}
@@ -145,9 +125,10 @@ const AppLayout = () => {
             </ProtectedRoute>
           }
         />
-
       </Routes>
 
+      {/* Public-page controls */}
+      {!isAdminRoute && <BackToTopButton />}
       {!isAdminRoute && <Footer />}
     </>
   );

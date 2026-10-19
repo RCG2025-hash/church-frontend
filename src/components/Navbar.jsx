@@ -1,296 +1,354 @@
+
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaChurch } from "react-icons/fa";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  FaBars,
+  FaTimes,
+  FaChevronDown,
+} from "react-icons/fa";
+
 import churchLogo from "../assets/church_logo.png";
 
-// Split navLinks into main links and more links
 const mainLinks = [
-  { id: "home", label: "Home", path: "/" },
-  { id: "about", label: "About", path: "/about" },
-  { id: "pastors", label: "Pastors", path: "/pastors" },
-  { id: "events", label: "Events", path: "/events" },
-  { id: "live", label: "Live", path: "/live" },
-  { id: "donation", label: "Donate", path: "/donation" },
+  { label: "Home", path: "/", end: true },
+  { label: "About", path: "/about" },
+  { label: "Pastors", path: "/pastors" },
+  { label: "Events", path: "/events" },
+  { label: "Live", path: "/live" },
+  { label: "Donate", path: "/donation" },
 ];
 
 const moreLinks = [
-  { id: "joinworkforce", label: "Join Us", path: "/joinworkforce" },
-  { id: "newmember", label: "New Members", path: "/newmember" },
-  { id: "contact", label: "Contact", path: "/contact" },
+  { label: "Join Us", path: "/joinworkforce" },
+  { label: "New Members", path: "/newmember" },
+  { label: "Contact", path: "/contact" },
 ];
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const location = useLocation();
-  const navigate = useNavigate();
+
+  // Change navbar appearance when scrolling.
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-      
-      // Update active section based on scroll position
-      const sections = document.querySelectorAll("section[id]");
-      let currentSection = "";
-      
-      sections.forEach((section) => {
-        const sectionTop = section.offsetTop - 100;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute("id");
-        
-        if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-          currentSection = sectionId;
-        }
-      });
-      
-      setActiveSection(currentSection);
+      setIsScrolled(window.scrollY > 40);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  // Also set active section based on current route
+  // Close menus whenever the visitor changes pages.
   useEffect(() => {
-    const currentPath = location.pathname.replace("/", "");
-    if (currentPath === "") {
-      setActiveSection("home");
-    } else {
-      setActiveSection(currentPath);
-    }
-  }, [location]);
-
-  const scrollToSection = (id) => {
-  // If we're not on the homepage,
-  // go there first and remember the section.
-  if (location.pathname !== "/") {
-
-    navigate("/", {
-      state: {
-        scrollTo: id,
-      },
-    });
-
     setIsOpen(false);
     setDropdownOpen(false);
+  }, [location.pathname]);
 
-    return;
-  }
+  // Close the mobile menu when switching to desktop width.
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
+      }
+    };
 
-  if (id === "home") {
+    window.addEventListener("resize", handleResize);
 
-    window.scrollTo({
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
-      top: 0,
+  const linkClass = ({ isActive }) =>
+    `rounded-lg px-3 py-2 text-sm xl:text-base font-semibold
+    transition-all duration-200 ${
+      isActive
+        ? "bg-[#B42332] text-white shadow-sm"
+        : isScrolled
+        ? "text-[#17365D] hover:bg-blue-50 hover:text-[#B42332]"
+        : "text-white hover:bg-white/15 hover:text-white"
+    }`;
 
-      behavior: "smooth",
+  const moreIsActive = moreLinks.some(
+    (link) => location.pathname === link.path
+  );
 
-    });
-
-  } else {
-
-    const section = document.getElementById(id);
-
-    if (section) {
-
-      const yOffset = -80;
-
-      const y =
-        section.getBoundingClientRect().top +
-        window.pageYOffset +
-        yOffset;
-
-      window.scrollTo({
-
-        top: y,
-
-        behavior: "smooth",
-
-      });
-
-    }
-
-  }
-
-  setIsOpen(false);
-  setDropdownOpen(false);
-
-};
-
-  const handleMoreClick = (e, id) => {
-    e.preventDefault();
-    scrollToSection(id);
-    setDropdownOpen(false);
-  };
+  const mobileLinkClass = ({ isActive }) =>
+    `block rounded-lg px-4 py-3 text-sm font-semibold
+    transition-colors duration-200 ${
+      isActive
+        ? "bg-[#B42332] text-white shadow-sm"
+        : "text-[#17365D] hover:bg-blue-50 hover:text-[#B42332]"
+    }`;
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg py-2"
-          : "bg-gradient-to-b from-gray-900/80 to-transparent py-4"
+          ? "bg-white/95 py-2 shadow-md backdrop-blur-lg"
+          : "bg-[#102844]/90 py-3 shadow-sm backdrop-blur-sm"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          {/* Logo */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-[64px] items-center justify-between gap-4">
+          {/* Church logo */}
           <Link
             to="/"
-            onClick={() => scrollToSection("home")}
-            className="flex items-center space-x-2 text-2xl font-serif font-bold text-white"
+            aria-label="Reconciliation Church of God home"
+            onClick={() => {
+              setIsOpen(false);
+              setDropdownOpen(false);
+            }}
+            className="flex shrink-0 items-center"
           >
-            <img src={churchLogo} alt="" style={{width:'70px'}}/>
+            <img
+              src={churchLogo}
+              alt="Reconciliation Church of God"
+              className="h-14 w-auto max-w-[180px] object-contain transition-transform duration-300 hover:scale-[1.03] sm:h-16"
+            />
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-1">
-            {mainLinks.map(({ id, label, path }) => (
-              <Link
-                key={id}
-                to={path}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection(id);
-                }}
-                className={`px-4 py-2 rounded-lg text-lg font-medium transition-all duration-300 ${
-                  activeSection === id
-                    ? "bg-amber-600 text-white shadow-md"
-                    : isScrolled
-                    ? "text-gray-700 hover:text-amber-600 hover:bg-gray-100"
-                    : "text-white hover:text-amber-300 hover:bg-white/10"
-                }`}
+          {/* Desktop navigation */}
+          <div className="hidden items-center gap-1 lg:flex">
+            {mainLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                end={link.end}
+                className={linkClass}
               >
-                {label}
-              </Link>
+                {link.label}
+              </NavLink>
             ))}
-            
-            {/* More Dropdown for Desktop */}
-            <div className="relative group">
-              <button 
-                className={`px-4 py-2 rounded-lg text-lg font-medium transition-all duration-300 flex items-center space-x-1 ${
-                  moreLinks.some(link => link.id === activeSection)
-                    ? "bg-amber-600 text-white shadow-md"
+
+            {/* Desktop More dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() =>
+                  setDropdownOpen((open) => !open)
+                }
+                aria-expanded={dropdownOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200 xl:text-base ${
+                  moreIsActive
+                    ? "bg-[#B42332] text-white"
                     : isScrolled
-                    ? "text-gray-700 hover:text-amber-600 hover:bg-gray-100"
-                    : "text-white hover:text-amber-300 hover:bg-white/10"
+                    ? "text-[#17365D] hover:bg-blue-50 hover:text-[#B42332]"
+                    : "text-white hover:bg-white/15"
                 }`}
               >
                 <span>More</span>
-                <span className="text-sm transform group-hover:rotate-180 transition-transform">▼</span>
+
+                <FaChevronDown
+                  className={`text-xs transition-transform duration-300 ${
+                    dropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
-              <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-md rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-200">
-                {moreLinks.map(({ id, label, path }) => (
-                  <Link
-                    key={id}
-                    to={path}
-                    onClick={(e) => handleMoreClick(e, id)}
-                    className={`block px-4 py-3 text-base font-medium transition-colors border-b border-gray-100 last:border-b-0 ${
-                      activeSection === id
-                        ? "bg-amber-50 text-amber-600 font-semibold"
-                        : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
-                    } first:rounded-t-lg last:rounded-b-lg`}
+
+              <AnimatePresence>
+                {dropdownOpen && (
+                  <motion.div
+                    initial={{
+                      opacity: 0,
+                      y: -8,
+                      scale: 0.98,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -8,
+                      scale: 0.98,
+                    }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute right-0 top-full z-50 mt-3 w-52 origin-top-right overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-xl"
                   >
-                    {label}
-                  </Link>
-                ))}
-              </div>
+                    {moreLinks.map((link) => (
+                      <NavLink
+                        key={link.path}
+                        to={link.path}
+                        className={({ isActive }) =>
+                          `block px-5 py-3 text-sm font-medium transition-colors duration-200 ${
+                            isActive
+                              ? "bg-red-50 text-[#B42332]"
+                              : "text-gray-700 hover:bg-blue-50 hover:text-[#17365D]"
+                          }`
+                        }
+                      >
+                        {link.label}
+                      </NavLink>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu toggle */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={`lg:hidden p-2 rounded-md text-2xl transition-colors ${
+            type="button"
+            onClick={() => {
+              setIsOpen((open) => !open);
+              setDropdownOpen(false);
+            }}
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl transition-colors duration-200 lg:hidden ${
               isScrolled
-                ? "text-gray-800 hover:bg-gray-100"
-                : "text-white hover:bg-white/20"
+                ? "text-[#17365D] hover:bg-blue-50"
+                : "text-white hover:bg-white/15"
             }`}
-            aria-label="Toggle Menu"
+            aria-label={
+              isOpen
+                ? "Close navigation menu"
+                : "Open navigation menu"
+            }
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
           >
-            {isOpen ? <FaTimes /> : <FaBars />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={isOpen ? "close" : "menu"}
+                initial={{
+                  opacity: 0,
+                  rotate: -90,
+                  scale: 0.7,
+                }}
+                animate={{
+                  opacity: 1,
+                  rotate: 0,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  rotate: 90,
+                  scale: 0.7,
+                }}
+                transition={{ duration: 0.18 }}
+                className="flex items-center justify-center"
+              >
+                {isOpen ? <FaTimes /> : <FaBars />}
+              </motion.span>
+            </AnimatePresence>
           </button>
         </div>
 
-        {/* Mobile Navigation Menu - Simple Scroll Solution */}
-<div
-  className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-    isOpen
-      ? "max-h-[80vh] opacity-100 mt-4"
-      : "max-h-0 opacity-0"
-  } ${isScrolled ? "bg-white/95" : "bg-gray-900/95"} rounded-lg backdrop-blur-md`}
->
-  <div className="max-h-[70vh] overflow-y-auto px-2 pt-2 pb-4 space-y-1">
-    {/* Main Links */}
-    {mainLinks.map(({ id, label, path }) => (
-      <Link
-        key={id}
-        to={path}
-        onClick={(e) => {
-          e.preventDefault();
-          scrollToSection(id);
-        }}
-        className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-          activeSection === id
-            ? "bg-amber-600 text-white"
-            : isScrolled
-            ? "text-gray-700 hover:bg-gray-100"
-            : "text-white hover:bg-white/10"
-        }`}
-      >
-        {label}
-      </Link>
-    ))}
-    
-    {/* More Links Section with Dropdown */}
-    <div className={`border-t ${
-      isScrolled ? "border-gray-300" : "border-gray-600"
-    } pt-3 mt-2`}>
-      <button
-        onClick={() => setDropdownOpen(!dropdownOpen)}
-        className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors flex items-center justify-between ${
-          moreLinks.some(link => link.id === activeSection)
-            ? "bg-amber-600 text-white"
-            : isScrolled
-            ? "text-gray-700 hover:bg-gray-100"
-            : "text-white hover:bg-white/10"
-        }`}
-      >
-        <span>More</span>
-        <span className="text-sm transform transition-transform">
-          {dropdownOpen ? "▲" : "▼"}
-        </span>
-      </button>
-      
-      <div className={`overflow-hidden transition-all duration-300 ${
-        dropdownOpen ? "max-h-[500px] mt-2" : "max-h-0"
-      }`}>
-        <div className="space-y-1">
-          {moreLinks.map(({ id, label, path }) => (
-            <Link
-              key={id}
-              to={path}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection(id);
-                setIsOpen(false);
+        {/* Animated mobile navigation */}
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              id="mobile-navigation"
+              key="mobile-navigation"
+              initial={{
+                opacity: 0,
+                height: 0,
+                y: -12,
               }}
-              className={`block px-6 py-3 rounded-lg text-base font-medium transition-colors ${
-                activeSection === id
-                  ? "bg-amber-600 text-white"
-                  : isScrolled
-                  ? "text-gray-700 hover:bg-gray-100"
-                  : "text-white hover:bg-white/10"
-              }`}
+              animate={{
+                opacity: 1,
+                height: "auto",
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                y: -8,
+              }}
+              transition={{
+                height: {
+                  duration: 0.3,
+                  ease: "easeInOut",
+                },
+                opacity: { duration: 0.2 },
+                y: {
+                  duration: 0.25,
+                  ease: "easeOut",
+                },
+              }}
+              className="mt-3 overflow-hidden lg:hidden"
             >
-              {label}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="max-h-[70vh] overflow-y-auto rounded-xl border border-gray-100 bg-white p-3 shadow-xl">
+                {/* Main mobile links */}
+                <div className="space-y-1">
+                  {mainLinks.map((link, index) => (
+                    <motion.div
+                      key={link.path}
+                      initial={{
+                        opacity: 0,
+                        x: -15,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        x: 0,
+                      }}
+                      transition={{
+                        duration: 0.22,
+                        delay: index * 0.045,
+                      }}
+                    >
+                      <NavLink
+                        to={link.path}
+                        end={link.end}
+                        className={mobileLinkClass}
+                      >
+                        {link.label}
+                      </NavLink>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Additional mobile links */}
+                <div className="my-3 border-t border-gray-200 pt-3">
+                  <p className="px-4 pb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    More
+                  </p>
+
+                  <div className="space-y-1">
+                    {moreLinks.map((link, index) => (
+                      <motion.div
+                        key={link.path}
+                        initial={{
+                          opacity: 0,
+                          x: -15,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                        }}
+                        transition={{
+                          duration: 0.22,
+                          delay:
+                            (mainLinks.length + index) * 0.045,
+                        }}
+                      >
+                        <NavLink
+                          to={link.path}
+                          className={mobileLinkClass}
+                        >
+                          {link.label}
+                        </NavLink>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );

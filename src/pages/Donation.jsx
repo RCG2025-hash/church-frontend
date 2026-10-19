@@ -1,338 +1,489 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  FaChurch, 
-  FaHandHoldingHeart, 
-  FaCopy, 
-  FaCheck, 
+import {
+  FaChurch,
+  FaHandHoldingHeart,
+  FaCopy,
+  FaCheck,
   FaCreditCard,
-  FaShieldAlt,
-  FaReceipt,
-  FaHeart
-} from 'react-icons/fa';
+  FaHeart,
+  FaArrowRight,
+  FaRegBuilding,
+  FaGift,
+  FaInfoCircle,
+} from "react-icons/fa";
+
+const churchAccount = {
+  name: "Reconciliation Church of God",
+  number: "0751609016",
+  bank: "FCMB",
+};
+
+const givingOptions = [
+  {
+    type: "Tithe",
+    description:
+      "Give your regular tithe as part of your worship and commitment to God.",
+    verse: '"Bring the whole tithe into the storehouse..."',
+    reference: "Malachi 3:10",
+    icon: FaChurch,
+  },
+  {
+    type: "Offering",
+    description:
+      "Give an offering from a willing heart to support the work of the church.",
+    verse: '"Each of you should give what you have decided in your heart to give..."',
+    reference: "2 Corinthians 9:7",
+    icon: FaHandHoldingHeart,
+  },
+  {
+    type: "Ofada Building Offering",
+    description:
+      "Contribute towards the church building project in Ofada.",
+    verse: '"The people had a mind to work."',
+    reference: "Nehemiah 4:6",
+    icon: FaRegBuilding,
+  },
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
+};
 
 const Donation = () => {
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState('bank');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState("bank");
+  const [copiedField, setCopiedField] = useState("");
+  const [copyError, setCopyError] = useState("");
 
-  // Church banking information
-  const churchAccount = {
-    name: 'Reconciliation Church of God',
-    number: '0751609016',
-    bank: 'FCMB',
-    description: 'Main Church Account'
+  const handleCopy = async (value, field) => {
+    setCopyError("");
+
+    try {
+      if (!navigator.clipboard || !window.isSecureContext) {
+        throw new Error("Clipboard unavailable");
+      }
+
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+
+      window.setTimeout(() => {
+        setCopiedField((current) =>
+          current === field ? "" : current
+        );
+      }, 2000);
+    } catch {
+      setCopiedField("");
+      setCopyError(
+        "Unable to copy automatically. Please select and copy the details manually."
+      );
+    }
   };
 
-  // Additional accounts for different purposes
-  const givingOptions = [
-    {
-      type: 'Tithe',
-      description: 'Give your regular tithe (10% of income)',
-      account: churchAccount,
-      verse: '"Bring the whole tithe into the storehouse..." - Malachi 3:10',
-      color: 'bg-blue-100'
-    },
-    {
-      type: 'Offering',
-      description: 'General offerings and gifts',
-      account: churchAccount,
-      verse: '"Each of you should give what you have decided in your heart to give..." - 2 Corinthians 9:7',
-      color: 'bg-green-100'
-    },
-    {
-      type: 'Ofada Building Offering',
-      description: 'Support our church building projects',
-      account: { ...churchAccount, description: 'Building Fund Account' },
-      verse: '"The people had a mind to work." - Nehemiah 4:6',
-      color: 'bg-amber-100'
-    },
-    // {
-    //   type: 'Missions',
-    //   description: 'Support our local and international missions',
-    //   account: { ...churchAccount, description: 'Missions Account' },
-    //   verse: '"Go and make disciples of all nations..." - Matthew 28:19',
-    //   color: 'bg-purple-100'
-    // }
+  const accountFields = [
+    { label: "Account Name", value: churchAccount.name, id: "name" },
+    { label: "Account Number", value: churchAccount.number, id: "number" },
+    { label: "Bank Name", value: churchAccount.bank, id: "bank" },
   ];
-
-  // Sample images (replace with your actual images)
-  const images = [
-    "https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    "https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    "https://images.unsplash.com/photo-1584983311807-3c6081bca0d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80"
-  ];
-
-  const nextSlide = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  // Auto-play the carousel
-  useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
-    return () => clearInterval(interval);
-  }, [currentImageIndex]);
-
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
-    <section id="donation" className="min-h-screen pt-20 bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-amber-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold font-serif mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            Support Our Ministry
-          </motion.h1>
-          <motion.p 
-            className="text-xl md:text-2xl max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Your generosity helps us spread God's word and serve our community
-          </motion.p>
-          <motion.div 
-            className="flex justify-center mt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <FaHandHoldingHeart className="text-4xl text-amber-400" />
-          </motion.div>
-        </div>
-      </div>
+    <main className="min-h-screen bg-white pt-20">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-[#102844] py-20 text-white sm:py-24">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#102844] via-[#17365D] to-[#263D60]" />
+        <div className="absolute -right-16 -top-20 -z-10 h-80 w-80 rounded-full bg-[#B42332]/20 blur-3xl" />
+        <div className="absolute -bottom-24 -left-16 -z-10 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
 
-      {/* Giving Options */}
-      <div className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+          className="mx-auto max-w-7xl px-5 text-center sm:px-8 lg:px-12"
+        >
+          <motion.div
+            variants={fadeUp}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Donation</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Choose how you'd like to support our church's mission and ministries
+            <FaHeart className="text-red-300" />
+            Giving at RCG
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUp}
+            className="font-serif text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
+          >
+            Give with a
+            <span className="block text-red-300">Grateful Heart</span>
+          </motion.h1>
+
+          <motion.p
+            variants={fadeUp}
+            className="mx-auto mt-6 max-w-3xl text-base leading-8 text-blue-100 sm:text-lg md:text-xl"
+          >
+            Support the work of God through your tithes, offerings, and
+            contributions to our church building project.
+          </motion.p>
+
+          <motion.a
+            variants={fadeUp}
+            href="#giving-options"
+            className="mt-8 inline-flex items-center justify-center gap-3 rounded-xl bg-[#B42332] px-7 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-[#941D2A]"
+          >
+            Explore Giving Options
+            <FaArrowRight />
+          </motion.a>
+        </motion.div>
+      </section>
+
+      {/* Introduction */}
+      <section className="px-5 py-16 sm:px-8 sm:py-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeUp}
+          className="mx-auto max-w-3xl text-center"
+        >
+          <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+            Ways to Give
+          </p>
+
+          <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl">
+            Giving Is an Act of Worship
+          </h2>
+
+          <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#B42332]" />
+
+          <p className="mt-6 text-base leading-8 text-gray-600 sm:text-lg">
+            Explore the different ways you can contribute to the life and
+            work of Reconciliation Church of God. Choose the giving option
+            that applies to you and follow the bank transfer instructions
+            below.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* Giving categories */}
+      <section
+        id="giving-options"
+        className="scroll-mt-28 bg-gray-50 px-5 py-16 sm:px-8 sm:py-20"
+      >
+        <div className="mx-auto max-w-7xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeUp}
+            className="mb-12 text-center"
+          >
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl">
+              Choose How You'd Like to Give
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
+              Each contribution can be identified by its purpose when
+              making your transfer.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16 mx-auto">
-            {givingOptions.map((option, index) => (
-              <motion.div
-                key={option.type}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`${option.color} p-6 rounded-xl text-center hover:shadow-lg transition-shadow`}
-              >
-                <div className="w-12 h-12 bg-amber-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FaHeart className="text-white text-xl" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{option.type}</h3>
-                <p className="text-gray-700 text-sm mb-3">{option.description}</p>
-                <p className="text-amber-700 text-xs italic">{option.verse}</p>
-              </motion.div>
-            ))}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {givingOptions.map((option, index) => {
+              const Icon = option.icon;
+
+              return (
+                <motion.article
+                  key={option.type}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.15 }}
+                  variants={fadeUp}
+                  transition={{ delay: index * 0.08 }}
+                  whileHover={{ y: -5 }}
+                  className="flex h-full flex-col rounded-2xl border border-gray-100 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-xl"
+                >
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
+                    <Icon className="text-2xl text-[#17365D]" />
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-bold text-[#17365D]">
+                    {option.type}
+                  </h3>
+
+                  <p className="mt-3 flex-1 text-sm leading-7 text-gray-600">
+                    {option.description}
+                  </p>
+
+                  <div className="mt-6 border-l-2 border-[#B42332] pl-4">
+                    <p className="text-sm italic leading-6 text-gray-600">
+                      {option.verse}
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-[#B42332]">
+                      {option.reference}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab("bank");
+                      document
+                        .getElementById("giving-payment")
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                    }}
+                    className="mt-7 inline-flex items-center gap-2 self-start font-semibold text-[#17365D] transition-colors hover:text-[#B42332]"
+                  >
+                    View bank details
+                    <FaArrowRight className="text-sm" />
+                  </button>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Payment Methods */}
-      <div className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+      {/* Payment instructions */}
+      <section
+        id="giving-payment"
+        className="scroll-mt-28 px-5 py-16 sm:px-8 sm:py-20"
+      >
+        <div className="mx-auto max-w-5xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            className="text-center mb-12"
+            variants={fadeUp}
+            className="mb-10 text-center"
           >
-            <h2 className="text-3xl font-bold text-gray-900 font-serif mb-4">Give Securely</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+              Payment Information
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl">
+              Give Through Bank Transfer
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600">
+              Use the account details below to make your contribution.
+              Please confirm the details with the church if you are unsure
+              before completing a transfer.
+            </p>
           </motion.div>
 
-          {/* Payment Tabs */}
-          <div className="bg-gray-50 rounded-xl p-6">
-            <div className="flex border-b border-gray-200 mb-6">
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <div className="flex border-b border-gray-200 bg-gray-50 p-2">
               <button
-                onClick={() => setActiveTab('bank')}
-                className={`py-3 px-6 font-medium ${
-                  activeTab === 'bank'
-                    ? 'text-amber-600 border-b-2 border-amber-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                type="button"
+                role="tab"
+                id="bank-tab"
+                aria-selected={activeTab === "bank"}
+                aria-controls="bank-panel"
+                onClick={() => setActiveTab("bank")}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-semibold transition-colors sm:text-base ${
+                  activeTab === "bank"
+                    ? "bg-[#17365D] text-white shadow-sm"
+                    : "text-gray-600 hover:bg-white hover:text-[#17365D]"
                 }`}
               >
+                <FaRegBuilding />
                 Bank Transfer
               </button>
+
               <button
-                onClick={() => setActiveTab('online')}
-                className={`py-3 px-6 font-medium ${
-                  activeTab === 'online'
-                    ? 'text-amber-600 border-b-2 border-amber-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                type="button"
+                role="tab"
+                id="online-tab"
+                aria-selected={activeTab === "online"}
+                aria-controls="online-panel"
+                onClick={() => setActiveTab("online")}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-semibold transition-colors sm:text-base ${
+                  activeTab === "online"
+                    ? "bg-[#17365D] text-white shadow-sm"
+                    : "text-gray-600 hover:bg-white hover:text-[#17365D]"
                 }`}
               >
+                <FaCreditCard />
                 Online Payment
               </button>
             </div>
 
-            {activeTab === 'bank' && (
+            {activeTab === "bank" && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                key="bank"
+                id="bank-panel"
+                role="tabpanel"
+                aria-labelledby="bank-tab"
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="space-y-6"
+                className="p-5 sm:p-8"
               >
-                <div className="bg-white rounded-lg p-6 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Bank Transfer Details</h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Name</label>
-                      <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
-                        <span className="font-medium">{churchAccount.name}</span>
-                        <button
-                          onClick={() => handleCopy(churchAccount.name)}
-                          className="text-amber-600 hover:text-amber-700 ml-2"
-                        >
-                          {copied ? <FaCheck /> : <FaCopy />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
-                      <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
-                        <span className="font-mono">{churchAccount.number}</span>
-                        <button
-                          onClick={() => handleCopy(churchAccount.number)}
-                          className="text-amber-600 hover:text-amber-700 ml-2"
-                        >
-                          {copied ? <FaCheck /> : <FaCopy />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
-                      <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg">
-                        <span className="font-medium">{churchAccount.bank}</span>
-                        <button
-                          onClick={() => handleCopy(churchAccount.bank)}
-                          className="text-amber-600 hover:text-amber-700 ml-2"
-                        >
-                          {copied ? <FaCheck /> : <FaCopy />}
-                        </button>
-                      </div>
-                    </div>
+                <div className="mb-7 flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                    <FaChurch className="text-xl text-[#17365D]" />
                   </div>
 
-                  <div className="mt-6 p-4 bg-amber-50 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      <strong>Note:</strong> Please include your name and purpose (e.g., "Tithe", "Offering") in the transfer description.
+                  <div>
+                    <h3 className="text-xl font-bold text-[#17365D]">
+                      Church Account Details
+                    </h3>
+                    <p className="mt-1 text-sm leading-6 text-gray-500">
+                      Copy an individual detail using the button beside it.
                     </p>
                   </div>
                 </div>
+
+                <div className="space-y-4">
+                  {accountFields.map((field) => (
+                    <div key={field.id}>
+                      <label
+                        htmlFor={`account-${field.id}`}
+                        className="mb-2 block text-sm font-semibold text-gray-700"
+                      >
+                        {field.label}
+                      </label>
+
+                      <div className="flex min-w-0 items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 sm:p-4">
+                        <span
+                          id={`account-${field.id}`}
+                          className={`min-w-0 flex-1 break-words text-sm font-semibold text-gray-800 sm:text-base ${
+                            field.id === "number" ? "font-mono tracking-wider" : ""
+                          }`}
+                        >
+                          {field.value}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(field.value, field.id)}
+                          aria-label={`Copy ${field.label}`}
+                          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-[#17365D] transition-colors hover:border-[#17365D] hover:bg-blue-50"
+                        >
+                          {copiedField === field.id ? (
+                            <>
+                              <FaCheck className="text-green-600" />
+                              <span>Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <FaCopy />
+                              <span className="hidden sm:inline">Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {copyError && (
+                  <p
+                    role="alert"
+                    className="mt-4 rounded-lg bg-red-50 p-3 text-sm leading-6 text-red-700"
+                  >
+                    {copyError}
+                  </p>
+                )}
+
+                <div className="mt-7 flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4">
+                  <FaInfoCircle className="mt-1 shrink-0 text-[#17365D]" />
+                  <div className="text-sm leading-7 text-gray-700">
+                    <p className="font-bold text-[#17365D]">
+                      Please identify your transfer
+                    </p>
+                    Include your name and the purpose of your contribution
+                    in the transfer description, for example, "Tithe",
+                    "Offering", or "Ofada Building Offering".
+                  </div>
+                </div>
+
+                {/* <p className="mt-5 text-xs leading-6 text-gray-500">
+                  The same account details are currently displayed for all
+                  three giving categories, as provided in the existing page.
+                  Please verify that this arrangement is correct with the
+                  church.
+                </p> */}
               </motion.div>
             )}
 
-            {activeTab === 'online' && (
+            {activeTab === "online" && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                key="online"
+                id="online-panel"
+                role="tabpanel"
+                aria-labelledby="online-tab"
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-center py-12"
+                className="px-6 py-14 text-center sm:px-10"
               >
-                <FaCreditCard className="text-4xl text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Online Payments Coming Soon</h3>
-                <p className="text-gray-600">
-                  We're working on integrating secure online payment options. In the meantime, please use bank transfer.
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50">
+                  <FaCreditCard className="text-2xl text-[#17365D]" />
+                </div>
+
+                <span className="mt-5 inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800">
+                  Coming Soon
+                </span>
+
+                <h3 className="mt-4 text-xl font-bold text-[#17365D]">
+                  Online Payments
+                </h3>
+
+                <p className="mx-auto mt-3 max-w-lg leading-7 text-gray-600">
+                  Secure online payment options have not yet been integrated.
+                  In the meantime, please use the bank transfer details
+                  provided on this page.
                 </p>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("bank")}
+                  className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#17365D] px-5 py-3 font-semibold text-white transition-colors hover:bg-[#B42332]"
+                >
+                  View Bank Details
+                  <FaArrowRight />
+                </button>
               </motion.div>
             )}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Security & Trust
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold text-gray-900 font-serif mb-4">Your Giving is Secure</h2>
-          </motion.div>
+      {/* Giving scripture */}
+      <section className="relative isolate overflow-hidden bg-[#17365D] px-5 py-16 text-white sm:px-8 sm:py-20">
+        <div className="absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-[#B42332]/20 blur-3xl" />
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: FaShieldAlt,
-                title: "Secure Processing",
-                description: "All transactions are handled with the highest security standards"
-              },
-              {
-                icon: FaReceipt,
-                title: "Tax Receipts",
-                description: "Receive proper documentation for tax-deductible contributions"
-              },
-              {
-                icon: FaChurch,
-                title: "Transparent Use",
-                description: "Funds are used responsibly for church ministries and operations"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-6 bg-white rounded-xl shadow-sm"
-              >
-                <feature.icon className="text-3xl text-amber-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeUp}
+          className="mx-auto max-w-4xl text-center"
+        >
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
+            <FaGift className="text-2xl text-red-300" />
           </div>
-        </div>
-      </div> */}
 
-      {/* Bible Verse */}
-      <div className="py-16 bg-gradient-to-r from-amber-600 to-amber-700 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <FaHandHoldingHeart className="text-4xl mx-auto mb-6" />
-            <blockquote className="text-2xl font-serif italic mb-4">
-              "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."
-            </blockquote>
-            <p className="text-lg">2 Corinthians 9:7</p>
-          </motion.div>
-        </div>
-      </div>
-    </section>
+          <blockquote className="mt-7 font-serif text-xl italic leading-relaxed sm:text-2xl md:text-3xl">
+            "Each of you should give what you have decided in your heart to
+            give, not reluctantly or under compulsion, for God loves a
+            cheerful giver."
+          </blockquote>
+
+          <p className="mt-6 font-semibold text-red-300">
+            2 Corinthians 9:7
+          </p>
+        </motion.div>
+      </section>
+    </main>
   );
 };
 

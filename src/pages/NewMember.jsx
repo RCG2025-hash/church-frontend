@@ -1,98 +1,78 @@
-import React, { useState } from "react";
-import { motion } from 'framer-motion';
-import axios from 'axios';
-import { 
-  FaChurch, 
-  FaUsers, 
-  FaBookOpen, 
-  FaHandsHelping, 
+
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import {
+  FaChurch,
+  FaUsers,
+  FaBookOpen,
+  FaHandsHelping,
   FaPray,
   FaHeart,
   FaCheckCircle,
   FaPaperPlane,
   FaUserFriends,
-  FaGraduationCap
+  FaArrowRight,
+  FaTimes,
 } from "react-icons/fa";
 
 const NewMember = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     email: "",
     phoneNumber: "",
     address: "",
     gender: "",
     howDidYouHear: "",
-    spiritualJourneyStage: '',
+    spiritualJourneyStage: "",
     prayerRequest: "",
-  });
+  };
 
-  const [status, setStatus] = useState('');
+  const [formData, setFormData] = useState(initialFormData);
+  const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setStatus('Submitting...');
-    
-    try {
-      const API_URL = import.meta.env.VITE_API_URL;
-      // const response = await axios.post('http://localhost:5000/api/submissions/new-member', formData);
-      const response = await axios.post(`${API_URL}/api/submissions/new-member`, formData);
-      console.log('New member information submitted successfully:', response.data);
-      setStatus('success');
-      
-      setTimeout(() => {
-        setStatus('');
-      }, 5000);
-      
-      setFormData({
-        name: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
-        gender: "",
-        howDidYouHear: "",
-        spiritualJourneyStage: '',
-        prayerRequest: "",
-      });
-    } catch (error) {
-      console.error('Error submitting new member information:', error.response ? error.response.data : error.message);
-      setStatus('error');
-      
-      setTimeout(() => {
-        setStatus('');
-      }, 5000);
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (status !== "success") {
+      setIsSuccessVisible(false);
+      return;
     }
-  };
+
+    setIsSuccessVisible(true);
+
+    const timer = window.setTimeout(() => {
+      setIsSuccessVisible(false);
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [status]);
 
   const membershipBenefits = [
     {
       icon: FaUserFriends,
       title: "Pastoral Care",
-      description: "Access to counseling, prayer, and spiritual guidance from our pastors"
+      description:
+        "Access to counseling, prayer, and spiritual guidance from our pastors.",
     },
     {
       icon: FaHandsHelping,
       title: "Ministry Opportunities",
-      description: "Serve according to your gifts and passions in various ministries"
+      description:
+        "Serve according to your gifts and passions in our various ministries.",
     },
     {
       icon: FaBookOpen,
       title: "Discipleship Classes",
-      description: "Grow in your faith through our structured discipleship programs"
+      description:
+        "Grow in your faith through structured discipleship and biblical teaching.",
     },
     {
       icon: FaHeart,
       title: "Church Family",
-      description: "Join a supportive community that cares for one another"
-    }
+      description:
+        "Become part of a supportive community that cares for one another.",
+    },
   ];
 
   const spiritualJourneyOptions = [
@@ -100,7 +80,7 @@ const NewMember = () => {
     { value: "New Believer", label: "New Believer" },
     { value: "Growing Christian", label: "Growing Christian" },
     { value: "Mature Christian", label: "Mature Christian" },
-    { value: "Prefer Not To Say", label: "Prefer Not To Say" }
+    { value: "Prefer Not To Say", label: "Prefer Not To Say" },
   ];
 
   const hearAboutUsOptions = [
@@ -109,340 +89,601 @@ const NewMember = () => {
     { value: "Church Website", label: "Church Website" },
     { value: "Church Event", label: "Church Event" },
     { value: "Flyers and Posters", label: "Flyers and Posters" },
-    { value: "Other", label: "Other" }
+    { value: "Other", label: "Other" },
   ];
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+
+    if (status) {
+      setStatus("");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setIsSubmitting(true);
+    setStatus("submitting");
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL;
+
+      const response = await axios.post(
+        `${API_URL}/api/submissions/new-member`,
+        formData
+      );
+
+      console.log(
+        "New member information submitted successfully:",
+        response.data
+      );
+
+      setStatus("success");
+      setFormData(initialFormData);
+    } catch (error) {
+      console.error(
+        "Error submitting new member information:",
+        error.response ? error.response.data : error.message
+      );
+
+      setStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const inputClass =
+    "w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-100";
+
+  const labelClass =
+    "mb-2 block text-sm font-semibold text-slate-700";
+
   return (
-    <section id="newmember" className="min-h-screen pt-20 bg-gray-50">
+    <main className="min-h-screen bg-white pt-20">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-amber-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold font-serif mb-6"
-            initial={{ opacity: 0, y: 30 }}
+      <section className="relative isolate overflow-hidden bg-[#0b1f46] text-white">
+        <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-red-600/20 blur-3xl" />
+        <div className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10"
+          >
+            <FaUsers className="text-3xl text-red-400" />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-red-300"
+          >
+            Welcome to RCG
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="font-serif text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
           >
             Join Our Church Family
           </motion.h1>
-          <motion.p 
-            className="text-xl md:text-2xl max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Become part of our community and grow together in faith
-          </motion.p>
-          <motion.div 
-            className="flex justify-center mt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <FaUsers className="text-4xl text-amber-400" />
-          </motion.div>
-        </div>
-      </div>
 
-      {/* Benefits Section */}
-      <div className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.25 }}
+            className="mx-auto mt-6 max-w-2xl text-base leading-8 text-blue-100 sm:text-lg"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Why Become a Member?</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Membership connects you deeper to our church family and God's purpose for your life
+            Become part of our community, build meaningful relationships,
+            and grow together in faith.
+          </motion.p>
+
+          <motion.a
+            href="#member-registration"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mt-8 inline-flex items-center gap-3 rounded-lg bg-red-600 px-7 py-3.5 font-semibold text-white shadow-lg transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300/40"
+          >
+            Register as a New Member
+            <FaArrowRight />
+          </motion.a>
+        </div>
+      </section>
+
+      {/* Membership Benefits */}
+      <section className="bg-slate-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="mx-auto mb-12 max-w-3xl text-center"
+          >
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-red-600">
+              Grow with us
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#0b1f46] sm:text-4xl">
+              Why Become a Member?
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-red-600" />
+
+            <p className="mt-6 text-base leading-7 text-slate-600 sm:text-lg">
+              Membership connects you more deeply with our church family
+              and creates opportunities to grow in faith, fellowship, and service.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {membershipBenefits.map((benefit, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <benefit.icon className="text-amber-600 text-xl" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                <p className="text-gray-600 text-sm">{benefit.description}</p>
-              </motion.div>
-            ))}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {membershipBenefits.map((benefit, index) => {
+              const BenefitIcon = benefit.icon;
+
+              return (
+                <motion.article
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: index * 0.08 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5 }}
+                  className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:border-blue-200 hover:shadow-xl"
+                >
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[#0b1f46] text-2xl text-white">
+                    <BenefitIcon />
+                  </div>
+
+                  <h3 className="text-lg font-bold text-[#0b1f46]">
+                    {benefit.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {benefit.description}
+                  </p>
+                </motion.article>
+              );
+            })}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Registration Form */}
-      <div className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+      <section
+        id="member-registration"
+        className="scroll-mt-24 bg-white py-16 sm:py-20"
+      >
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="mx-auto mb-12 max-w-3xl text-center"
           >
-            <h2 className="text-3xl font-bold text-gray-900 font-serif mb-4">New Member Registration</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              We're excited to welcome you into our church family
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-red-600">
+              Your journey begins here
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#0b1f46] sm:text-4xl">
+              New Member Registration
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-red-600" />
+
+            <p className="mt-6 text-base leading-7 text-slate-600 sm:text-lg">
+              We're excited to welcome you into our church family.
+              Please complete the form below.
             </p>
           </motion.div>
 
-          <div className="bg-gray-50 rounded-xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Personal Information */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    required
-                    placeholder="Your full name"
-                  />
+          <div className="grid overflow-hidden rounded-3xl border border-slate-200 shadow-xl lg:grid-cols-[0.75fr_1.25fr]">
+            {/* Form Introduction */}
+            <div className="relative overflow-hidden bg-[#0b1f46] p-8 text-white sm:p-10 lg:p-12">
+              <div className="absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-red-600/20 blur-2xl" />
+
+              <div className="relative">
+                <div className="mb-7 flex h-14 w-14 items-center justify-center rounded-xl bg-red-600 text-2xl">
+                  <FaChurch />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    required
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-              </div>
+                <h3 className="font-serif text-3xl font-bold leading-tight">
+                  We're Happy You're Here
+                </h3>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    required
-                    placeholder="+234 800 000 0000"
-                  />
+                <p className="mt-5 leading-8 text-blue-100">
+                  Thank you for taking this step. We look forward to
+                  connecting with you and helping you become part of our
+                  church community.
+                </p>
+
+                <div className="mt-9 border-t border-white/15 pt-7">
+                  <p className="flex items-start gap-3 text-sm leading-7 text-blue-100">
+                    <FaCheckCircle className="mt-1 shrink-0 text-red-400" />
+                    Tell us a little about yourself.
+                  </p>
+
+                  <p className="mt-4 flex items-start gap-3 text-sm leading-7 text-blue-100">
+                    <FaCheckCircle className="mt-1 shrink-0 text-red-400" />
+                    Share how you connected with RCG.
+                  </p>
+
+                  <p className="mt-4 flex items-start gap-3 text-sm leading-7 text-blue-100">
+                    <FaCheckCircle className="mt-1 shrink-0 text-red-400" />
+                    Let us know how we can pray for you.
+                  </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Gender *
-                  </label>
-                  <select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    required
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                  </select>
+                <div className="mt-10 rounded-xl border border-white/15 bg-white/5 p-5">
+                  <FaHeart className="mb-3 text-2xl text-red-400" />
+                  <p className="font-serif text-lg font-semibold">
+                    You are welcome here.
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-blue-100">
+                    We look forward to growing together in faith.
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address *
-                </label>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  rows="3"
-                  placeholder="Your complete address"
-                  required
-                />
-              </div>
+            {/* Form Fields */}
+            <div className="bg-white p-6 sm:p-10">
+              <h3 className="text-2xl font-bold text-[#0b1f46]">
+                Your Information
+              </h3>
 
-              {/* Church Connection */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    How did you hear about us? *
-                  </label>
-                  <select
-                    name="howDidYouHear"
-                    value={formData.howDidYouHear}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    required
-                  >
-                    <option value="">Select an option</option>
-                    {hearAboutUsOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
+              <p className="mt-2 mb-8 text-sm leading-6 text-slate-500">
+                Fields marked with <span className="text-red-600">*</span>{" "}
+                are required.
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="member-name" className={labelClass}>
+                      Full Name <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      id="member-name"
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      autoComplete="name"
+                      placeholder="Enter your full name"
+                      className={inputClass}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="member-email" className={labelClass}>
+                      Email Address <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      id="member-email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      className={inputClass}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="member-phone" className={labelClass}>
+                      Phone Number <span className="text-red-600">*</span>
+                    </label>
+
+                    <input
+                      id="member-phone"
+                      type="tel"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
+                      onChange={handleChange}
+                      autoComplete="tel"
+                      placeholder="+234 800 000 0000"
+                      className={inputClass}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="member-gender" className={labelClass}>
+                      Gender <span className="text-red-600">*</span>
+                    </label>
+
+                    <select
+                      id="member-gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className={inputClass}
+                      required
+                    >
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Prefer not to say">
+                        Prefer not to say
                       </option>
-                    ))}
-                  </select>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Stage in Spiritual Journey
+                  <label htmlFor="member-address" className={labelClass}>
+                    Address <span className="text-red-600">*</span>
                   </label>
-                  <select
-                    name="spiritualJourneyStage"
-                    value={formData.spiritualJourneyStage}
+
+                  <textarea
+                    id="member-address"
+                    name="address"
+                    value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  >
-                    <option value="">Select an option</option>
-                    {spiritualJourneyOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    autoComplete="street-address"
+                    rows={3}
+                    placeholder="Enter your complete address"
+                    className={`${inputClass} resize-y`}
+                    required
+                  />
                 </div>
-              </div>
 
-              {/* Prayer Request */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Prayer Request
-                </label>
-                <textarea
-                  name="prayerRequest"
-                  value={formData.prayerRequest}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                  rows="4"
-                  placeholder="How can we pray for you?"
-                />
-              </div>
+                <div className="border-t border-slate-200 pt-6">
+                  <h4 className="mb-5 text-lg font-bold text-[#0b1f46]">
+                    Your Church Connection
+                  </h4>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-amber-400 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
-              >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <FaPaperPlane className="mr-2" />
-                    Submit Registration
-                  </>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div>
+                      <label
+                        htmlFor="member-source"
+                        className={labelClass}
+                      >
+                        How did you hear about us?{" "}
+                        <span className="text-red-600">*</span>
+                      </label>
+
+                      <select
+                        id="member-source"
+                        name="howDidYouHear"
+                        value={formData.howDidYouHear}
+                        onChange={handleChange}
+                        className={inputClass}
+                        required
+                      >
+                        <option value="">Select an option</option>
+
+                        {hearAboutUsOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="member-spiritual-stage"
+                        className={labelClass}
+                      >
+                        Stage in Spiritual Journey
+                      </label>
+
+                      <select
+                        id="member-spiritual-stage"
+                        name="spiritualJourneyStage"
+                        value={formData.spiritualJourneyStage}
+                        onChange={handleChange}
+                        className={inputClass}
+                      >
+                        <option value="">Select an option</option>
+
+                        {spiritualJourneyOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="member-prayer-request"
+                    className={labelClass}
+                  >
+                    Prayer Request
+                  </label>
+
+                  <textarea
+                    id="member-prayer-request"
+                    name="prayerRequest"
+                    value={formData.prayerRequest}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="How can we pray for you?"
+                    className={`${inputClass} resize-y`}
+                  />
+
+                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                    This field is optional.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex w-full items-center justify-center gap-3 rounded-lg bg-red-600 px-6 py-3.5 font-bold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-200 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                      Submitting Registration...
+                    </>
+                  ) : (
+                    <>
+                      <FaPaperPlane />
+                      Submit Registration
+                    </>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {status === "success" && isSuccessVisible && (
+                    <motion.div
+                      role="status"
+                      aria-live="polite"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{
+                        opacity: 0,
+                        y: -8,
+                        transition: { duration: 0.3 },
+                      }}
+                      transition={{ duration: 0.25 }}
+                      className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-4 text-sm leading-6 text-green-800"
+                    >
+                      <FaCheckCircle className="mt-1 shrink-0 text-green-600" />
+
+                      <p className="flex-1">
+                        Your information has been submitted successfully!
+                        We'll be in touch soon.
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsSuccessVisible(false)}
+                        aria-label="Dismiss success message"
+                        className="shrink-0 rounded-md p-1 text-green-700 transition hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      >
+                        <FaTimes />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {status === "error" && (
+                  <motion.div
+                    role="alert"
+                    aria-live="assertive"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-800"
+                  >
+                    Failed to submit your information. Please try again or
+                    contact the church directly.
+                  </motion.div>
                 )}
-              </button>
-
-              {/* Status Messages */}
-              {status === 'success' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center"
-                >
-                  <FaCheckCircle className="mr-2 text-green-600" />
-                  Your information has been submitted successfully! We'll be in touch soon.
-                </motion.div>
-              )}
-
-              {status === 'error' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
-                >
-                  Failed to submit information. Please try again or contact us directly.
-                </motion.div>
-              )}
-            </form>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Next Steps */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+      {/* What Happens Next */}
+      <section className="bg-slate-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
+            className="text-center"
           >
-            <h2 className="text-3xl font-bold text-gray-900 font-serif mb-6">What Happens Next?</h2>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <ul className="text-left space-y-4 text-gray-700 max-w-2xl mx-auto">
-                <li className="flex items-start">
-                  <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                    <span className="text-amber-600 text-sm font-bold">1</span>
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-red-600">
+              Your next steps
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#0b1f46] sm:text-4xl">
+              What Happens Next?
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-red-600" />
+
+            <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-sm sm:p-9">
+              <div className="space-y-7">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b1f46] font-bold text-white">
+                    1
                   </div>
-                  <span>We'll contact you within 48 hours to welcome you</span>
-                </li>
-                {/* <li className="flex items-start">
-                  <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                    <span className="text-amber-600 text-sm font-bold">2</span>
+
+                  <div>
+                    <h3 className="font-bold text-[#0b1f46]">
+                      A Warm Welcome
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                      Our existing process is to contact you within 48 hours
+                      to welcome you.
+                    </p>
                   </div>
-                  <span>Invite you to our next New Members Orientation</span>
-                </li> */}
-                <li className="flex items-start">
-                  <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                    <span className="text-amber-600 text-sm font-bold">2</span>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b1f46] font-bold text-white">
+                    2
                   </div>
-                  <span>Help you get connected with a small group or ministry</span>
-                </li>
-              </ul>
+
+                  <div>
+                    <h3 className="font-bold text-[#0b1f46]">
+                      Connect with the Church Family
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">
+                      We'll help you get connected with a small group or
+                      ministry.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
-      </div>
+      </section>
 
       {/* Bible Verse */}
-      <div className="py-16 bg-gradient-to-r from-amber-600 to-amber-700 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <FaChurch className="text-4xl mx-auto mb-6" />
-            <blockquote className="text-2xl font-serif italic mb-4">
-              "So in Christ we, though many, form one body, and each member belongs to all the others."
-            </blockquote>
-            <p className="text-lg">Romans 12:5</p>
-          </motion.div>
-        </div>
-      </div>
-    </section>
+      <section className="bg-[#0b1f46] px-4 py-16 text-white sm:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mx-auto max-w-4xl text-center"
+        >
+          <FaChurch className="mx-auto mb-6 text-4xl text-red-400" />
+
+          <blockquote className="font-serif text-xl italic leading-9 sm:text-2xl sm:leading-10">
+            "So in Christ we, though many, form one body, and each member
+            belongs to all the others."
+          </blockquote>
+
+          <div className="mx-auto my-6 h-1 w-16 rounded-full bg-red-500" />
+
+          <p className="font-semibold tracking-wide text-red-300">
+            Romans 12:5
+          </p>
+        </motion.div>
+      </section>
+    </main>
   );
 };
 

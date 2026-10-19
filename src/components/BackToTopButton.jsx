@@ -1,49 +1,51 @@
-import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
-
+import { useEffect, useState } from "react";
+import { FaArrowUp } from "react-icons/fa";
 const BackToTopButton = () => {
-    const [isVisible, setIsVisible] = useState(false);
-    
-    const toggleVisibility = () => {
-        if (window.scrollY > 200) {
-            setIsVisible(true);
-        } else {
-            setIsVisible(false);
-        }
-    };
-    
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    };
-    
-    useEffect(() => {
-        window.addEventListener('scroll', toggleVisibility);
-        return () => window.removeEventListener('scroll', toggleVisibility);
-    }, []);
+  const [isVisible, setIsVisible] = useState(false);
 
-    return (
-        <button 
-            onClick={scrollToTop} 
-            className={`fixed bottom-8 right-6 z-50 p-4 bg-orange-500 hover:bg-orange-600 rounded-full text-black shadow-lg transition-all duration-300 ease-in-out cursor-pointer transform ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
-            }`}
-            title="Back to Top"
-            aria-label="Back to Top"
-        >
-            <div className="relative flex items-center justify-center">
-                <FontAwesomeIcon icon={faArrowUp} className="text-lg" />
-                {/* Adding a subtle cross above the arrow for church theme */}
-                {/* <div className="absolute -top-3 text-xs font-semibold">+</div> */}
-            </div>
-            
-            {/* Optional: Add a subtle glow effect */}
-            <div className="absolute inset-0 rounded-full bg-amber-600 opacity-0 hover:opacity-40 transition-opacity duration-300"></div>
-        </button>
-    );
+  useEffect(() => {
+    const toggleVisibility = () => {
+      setIsVisible(window.scrollY > 250);
+    };
+
+    toggleVisibility();
+
+    window.addEventListener("scroll", toggleVisibility, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", toggleVisibility);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={scrollToTop}
+      aria-label="Back to top"
+      title="Back to top"
+      tabIndex={isVisible ? 0 : -1}
+      className={`fixed bottom-6 right-5 z-[100] flex h-12 w-12 items-center justify-center rounded-full bg-[#0b1f46] text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300 sm:bottom-8 sm:right-8 sm:h-14 sm:w-14 ${
+        isVisible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-5 opacity-0"
+      }`}
+    >
+      <FaArrowUp
+        size={20}
+        aria-hidden="true"
+      />
+    </button>
+  );
 };
 
 export default BackToTopButton;

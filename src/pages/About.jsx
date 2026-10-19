@@ -1,293 +1,516 @@
-import React from 'react';
+
+import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Masonry from 'react-masonry-css';
-import { FaChurch, FaHistory, FaHeart, FaUsers, FaCross, FaPray } from 'react-icons/fa';
-import img1 from '../assets/About_us.jpg';
-import img2 from '../assets/About_us2.jpg';
-import img3 from '../assets/About_us3.jpg';
-import img4 from '../assets/About_us4.jpg';
-import img5 from '../assets/About_us5.jpg';
-import img6 from '../assets/About_us6.jpg';
-import img7 from '../assets/About_us7.jpg';
-import img8 from '../assets/About_us8.jpg';
-// Sample images (replace with your actual images)
+import Masonry from "react-masonry-css";
+import {
+  FaChurch,
+  FaHistory,
+  FaHeart,
+  FaUsers,
+  FaCross,
+  FaPray,
+  FaArrowRight,
+  FaHandsHelping,
+  FaBookOpen,
+} from "react-icons/fa";
+
+import img1 from "../assets/About_us.jpg";
+import img2 from "../assets/About_us2.jpg";
+import img3 from "../assets/About_us3.jpg";
+import img4 from "../assets/About_us4.jpg";
+import img5 from "../assets/About_us5.jpg";
+import img6 from "../assets/About_us6.jpg";
+import img7 from "../assets/About_us7.jpg";
+import img8 from "../assets/About_us8.jpg";
+
 const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const breakpointColumnsObj = {
   default: 3,
   1100: 2,
-  700: 1
+  700: 1,
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const About = () => {
   return (
-    <div className="min-h-screen pt-20 bg-white">
-      {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-gray-900 to-amber-900 text-white">
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <motion.h1 
-            className="text-5xl md:text-6xl font-bold font-serif mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <main className="min-h-screen overflow-hidden bg-white pt-20">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-[#102844] py-20 text-white sm:py-24 lg:py-28">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#102844] via-[#17365D] to-[#263D60]" />
+
+        <div className="absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full bg-[#B42332]/25 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 -z-10 h-80 w-80 rounded-full bg-blue-400/10 blur-3xl" />
+
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.15 },
+              },
+            }}
+            className="mx-auto max-w-4xl text-center"
           >
-            History
-          </motion.h1>
-          <motion.p 
-            className="text-xl md:text-2xl max-w-3xl mx-auto mb-8"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            How God has been working through our church family for over two decades
-          </motion.p>
-          <div className="flex justify-center">
-            <FaChurch className="text-4xl text-amber-400" />
-          </div>
+            <motion.div
+              variants={fadeUp}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm"
+            >
+              <FaChurch className="text-red-300" />
+              <span>Reconciliation Church of God Intl.</span>
+            </motion.div>
+
+            <motion.h1
+              variants={fadeUp}
+              className="font-serif text-4xl font-bold leading-tight sm:text-5xl md:text-6xl lg:text-7xl"
+            >
+              Our History,
+              <span className="block text-red-300">Vision and Mission</span>
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp}
+              className="mx-auto mt-6 max-w-3xl text-base leading-8 text-blue-100 sm:text-lg md:text-xl"
+            >
+              Discover the history, purpose and guiding principles of
+              Reconciliation Church of God International.
+            </motion.p>
+
+            <motion.div
+              variants={fadeUp}
+              className="mx-auto mt-8 h-1 w-20 rounded-full bg-[#B42332]"
+            />
+          </motion.div>
         </div>
       </section>
 
-      {/* Church History */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-amber-100 rounded-full mr-4">
-                  <FaHistory className="text-amber-600 text-2xl" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-900 font-serif">Our History</h2>
-              </div>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                Established in August 2003 under the name <span className="font-semibold">His Grace Bible Church</span>, 
-                our ministry later secured Government Registration as <span className="font-semibold">RECONCILIATION CHURCH OF GOD INTL</span> 
-                (also known as His Grace Chapel).
+      {/* Church history */}
+      <section className="py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-2 text-sm font-bold text-[#B42332]">
+              <FaHistory />
+              Our Background
+            </div>
+
+            <h2 className="font-serif text-3xl font-bold leading-tight text-[#17365D] sm:text-4xl">
+              A Journey of Grace and Reconciliation
+            </h2>
+
+            <div className="mb-7 mt-5 h-1 w-16 rounded-full bg-[#B42332]" />
+
+            <p className="mb-5 text-base leading-8 text-gray-600 sm:text-lg">
+              Established in August 2003 under the name{" "}
+              <strong className="font-semibold text-[#17365D]">
+                His Grace Bible Church
+              </strong>
+              , our ministry later secured Government Registration as{" "}
+              <strong className="font-semibold text-[#17365D]">
+                RECONCILIATION CHURCH OF GOD INTL
+              </strong>{" "}
+              (also known as His Grace Chapel).
+            </p>
+
+            <p className="mb-8 text-base leading-8 text-gray-600 sm:text-lg">
+              For over 20 years, RCG has been a place of worship and
+              transformation, growing from a small congregation to a vibrant
+              community that has impacted countless lives through faith, love,
+              and service.
+            </p>
+
+            <div className="rounded-r-xl border-l-4 border-[#B42332] bg-blue-50 p-5 sm:p-6">
+              <FaBookOpen className="mb-3 text-xl text-[#B42332]" />
+
+              <p className="text-base italic leading-7 text-[#17365D] sm:text-lg">
+                "For I know the plans I have for you, declares the Lord, plans
+                for welfare and not for evil, to give you a future and a hope."
               </p>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                For over 20 years, RCG has been a place of worship and transformation, growing from a small congregation 
-                to a vibrant community that has impacted countless lives through faith, love, and service.
+
+              <p className="mt-3 text-sm font-bold text-[#B42332]">
+                Jeremiah 29:11
               </p>
-              <div className="bg-amber-50 p-6 rounded-lg border-l-4 border-amber-500">
-                <p className="text-amber-800 italic">
-                  "For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, 
-                  to give you a future and a hope." - Jeremiah 29:11
+            </div>
+          </motion.div>
+
+          {/* History highlights */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute -right-3 -top-3 h-24 w-24 rounded-tr-3xl border-r-4 border-t-4 border-[#B42332]/30 sm:-right-5 sm:-top-5" />
+
+            <div className="relative grid grid-cols-2 gap-4">
+              <div className="rounded-2xl bg-[#17365D] p-5 text-white shadow-lg transition-transform duration-300 hover:-translate-y-1 sm:p-7">
+                <FaHistory className="mb-5 text-2xl text-red-300 sm:text-3xl" />
+                <p className="text-3xl font-bold sm:text-4xl">20+</p>
+                <p className="mt-2 text-sm leading-6 text-blue-100 sm:text-base">
+                  Years of Ministry
                 </p>
               </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-4"
-            >
-              <div className="bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg p-6 text-white text-center">
-                <p className="text-4xl font-bold">20+</p>
-                <p className="text-sm">Years of Ministry</p>
+
+              <div className="mt-8 rounded-2xl bg-[#B42332] p-5 text-white shadow-lg transition-transform duration-300 hover:-translate-y-1 sm:p-7">
+                <FaUsers className="mb-5 text-2xl text-white/80 sm:text-3xl" />
+                <p className="text-3xl font-bold sm:text-4xl">500+</p>
+                <p className="mt-2 text-sm leading-6 text-red-100 sm:text-base">
+                  Lives Transformed
+                </p>
               </div>
-              <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg p-6 text-white text-center">
-                <p className="text-4xl font-bold">500+</p>
-                <p className="text-sm">Lives Transformed</p>
+
+              <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 transition-transform duration-300 hover:-translate-y-1 sm:p-7">
+                <FaHandsHelping className="mb-5 text-2xl text-[#17365D] sm:text-3xl" />
+                <p className="text-3xl font-bold text-[#17365D] sm:text-4xl">
+                  15+
+                </p>
+                <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
+                  Ministries
+                </p>
               </div>
-              <div className="bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg p-6 text-white text-center">
-                <p className="text-4xl font-bold">15+</p>
-                <p className="text-sm">Ministries</p>
+
+              <div className="mt-8 rounded-2xl border border-red-100 bg-red-50 p-5 transition-transform duration-300 hover:-translate-y-1 sm:p-7">
+                <FaCross className="mb-5 text-2xl text-[#B42332] sm:text-3xl" />
+                <p className="text-3xl font-bold text-[#B42332] sm:text-4xl">
+                  1
+                </p>
+                <p className="mt-2 text-sm leading-6 text-gray-600 sm:text-base">
+                  Mission
+                </p>
               </div>
-              <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg p-6 text-white text-center">
-                <p className="text-4xl font-bold">1</p>
-                <p className="text-sm">Mission</p>
-              </div>
-            </motion.div>
-          </div>
+            </div>
+
+            <div className="absolute -bottom-4 -left-3 -z-10 h-24 w-24 rounded-bl-3xl border-b-4 border-l-4 border-[#17365D]/20 sm:-bottom-5 sm:-left-5" />
+          </motion.div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+      {/* Vision and mission */}
+      <section className="bg-gray-50 py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="mx-auto mb-12 max-w-3xl text-center sm:mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Vision & Mission</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Guided by faith, driven by purpose
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+              Our Purpose
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl md:text-5xl">
+              Our Vision &amp; Mission
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#B42332]" />
+
+            <p className="mt-5 text-base leading-7 text-gray-600 sm:text-lg">
+              Guided by faith and committed to the work of reconciliation.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
+          <div className="grid items-stretch gap-7 lg:grid-cols-2 lg:gap-8">
+            {/* Vision */}
+            <motion.article
+              initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-white p-8 rounded-lg shadow-sm"
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="group rounded-2xl border border-blue-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-9"
             >
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-amber-100 rounded-full mr-4">
-                  <FaCross className="text-amber-600 text-2xl" />
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-blue-50 transition-colors duration-300 group-hover:bg-[#17365D]">
+                  <FaCross className="text-2xl text-[#17365D] transition-colors duration-300 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
+
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#B42332]">
+                    Where We Are Going
+                  </p>
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-[#17365D] sm:text-3xl">
+                    Our Vision
+                  </h3>
+                </div>
               </div>
-              <p className="text-lg text-gray-700 leading-relaxed">
-               The vision of this church is to keep seeking the lost and raising them as saints for the kingdom of God. This essentially means working to keep depopulating the kingdom of hell while increasing the population of the Kingdom of God via the preaching of the Gospel of Life as perpetrated and delivered to us by The Lord Jesus Christ Himself.
+
+              <p className="text-base leading-8 text-gray-600 sm:text-lg">
+                The vision of this church is to keep seeking the lost and
+                raising them as saints for the kingdom of God. This essentially
+                means working to keep depopulating the kingdom of hell while
+                increasing the population of the Kingdom of God via the
+                preaching of the Gospel of Life as perpetrated and delivered
+                to us by The Lord Jesus Christ Himself.
               </p>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
+            </motion.article>
+
+            {/* Mission */}
+            <motion.article
+              initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="bg-white p-8 rounded-lg shadow-sm"
+              transition={{ duration: 0.6, delay: 0.12 }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="group rounded-2xl border border-red-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-9"
             >
-              <div className="flex items-center mb-6">
-                <div className="p-3 bg-amber-100 rounded-full mr-4">
-                  <FaHeart className="text-amber-600 text-2xl" />
+              <div className="mb-6 flex items-center gap-4">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-red-50 transition-colors duration-300 group-hover:bg-[#B42332]">
+                  <FaHeart className="text-2xl text-[#B42332] transition-colors duration-300 group-hover:text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
+
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#B42332]">
+                    What We Do
+                  </p>
+                  <h3 className="mt-1 font-serif text-2xl font-bold text-[#17365D] sm:text-3xl">
+                    Our Mission
+                  </h3>
+                </div>
               </div>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                To actualize our vision of populating the kingdom of God and depopulating hell, we have identified and pursuing the following missions:
+
+              <p className="mb-5 text-base leading-8 text-gray-600 sm:text-lg">
+                To actualize our vision of populating the kingdom of God and
+                depopulating hell, we have identified and pursuing the
+                following missions:
               </p>
-              <ol className="list-disc list-inside mt-1 text-lg text-gray-700 leading-relaxed text-justify">
-                <li>
-                  Regular Outreaches via Quarterly Open Air Crusades
-                </li>
-                <li>
-                  Weekly Street-Wise Evangelism Rally with TRACTS sharing.
-                </li>
-                <li>
-                  Regular Ministers Conference for raising and equipping ministers of the Gospel, especially for our ministry.
-                </li>
-                <li>
-                  Use of Regular Welfare Package distribution as means of showing God's mercy and attracting souls to the church for eventual conversion.
-                </li>
+
+              <ol className="space-y-4">
+                {[
+                  "Regular Outreaches via Quarterly Open Air Crusades.",
+                  "Weekly Street-Wise Evangelism Rally with TRACTS sharing.",
+                  "Regular Ministers Conference for raising and equipping ministers of the Gospel, especially for our ministry.",
+                  "Use of Regular Welfare Package distribution as means of showing God's mercy and attracting souls to the church for eventual conversion.",
+                ].map((mission, index) => (
+                  <li
+                    key={mission}
+                    className="flex items-start gap-3 text-base leading-7 text-gray-600"
+                  >
+                    <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-50 text-sm font-bold text-[#B42332]">
+                      {index + 1}
+                    </span>
+                    <span>{mission}</span>
+                  </li>
+                ))}
               </ol>
-            </motion.div>
+            </motion.article>
           </div>
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+      {/* Core values */}
+      <section className="py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="mx-auto mb-12 max-w-3xl text-center sm:mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Core Values</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              The principles that guide everything we do
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+              What Guides Us
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl md:text-5xl">
+              Our Core Values
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#B42332]" />
+
+            <p className="mt-5 text-base leading-7 text-gray-600 sm:text-lg">
+              The principles that guide everything we do.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid gap-6 md:grid-cols-3">
             {[
-              { icon: FaPray, title: "Faith", desc: "Trusting in God's plan and living according to His word" },
-              { icon: FaHeart, title: "Love", desc: "Showing Christ's love through our actions and relationships" },
-              { icon: FaUsers, title: "Community", desc: "Building meaningful connections and supporting one another" },
-            ].map((value, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-6 bg-gray-50 rounded-lg"
-              >
-                <div className="p-3 bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <value.icon className="text-amber-600 text-2xl" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{value.title}</h3>
-                <p className="text-gray-700">{value.desc}</p>
-              </motion.div>
-            ))}
+              {
+                icon: FaPray,
+                title: "Faith",
+                desc: "Trusting in God's plan and living according to His word.",
+                color: "blue",
+              },
+              {
+                icon: FaHeart,
+                title: "Love",
+                desc: "Showing Christ's love through our actions and relationships.",
+                color: "red",
+              },
+              {
+                icon: FaUsers,
+                title: "Community",
+                desc: "Building meaningful connections and supporting one another.",
+                color: "blue",
+              },
+            ].map((value, index) => {
+              const Icon = value.icon;
+              const isRed = value.color === "red";
+
+              return (
+                <motion.article
+                  key={value.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.12,
+                  }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="group rounded-2xl border border-gray-100 bg-white p-7 text-center shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl sm:p-9"
+                >
+                  <div
+                    className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-300 group-hover:rotate-3 group-hover:scale-110 ${
+                      isRed
+                        ? "bg-red-50 group-hover:bg-[#B42332]"
+                        : "bg-blue-50 group-hover:bg-[#17365D]"
+                    }`}
+                  >
+                    <Icon
+                      className={`text-2xl transition-colors duration-300 ${
+                        isRed
+                          ? "text-[#B42332] group-hover:text-white"
+                          : "text-[#17365D] group-hover:text-white"
+                      }`}
+                    />
+                  </div>
+
+                  <h3 className="mb-3 font-serif text-2xl font-bold text-[#17365D]">
+                    {value.title}
+                  </h3>
+
+                  <p className="leading-7 text-gray-600">{value.desc}</p>
+
+                  <div
+                    className={`mx-auto mt-6 h-1 w-10 rounded-full transition-all duration-300 group-hover:w-20 ${
+                      isRed ? "bg-[#B42332]" : "bg-[#17365D]"
+                    }`}
+                  />
+                </motion.article>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* Photo Gallery */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+      {/* Church photo gallery */}
+      <section className="bg-gray-50 py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="mx-auto mb-12 max-w-3xl text-center"
           >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Our Church Family</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Moments of worship, fellowship and service
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+              Life Together
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl md:text-5xl">
+              Our Church Family
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#B42332]" />
+
+            <p className="mt-5 text-base leading-7 text-gray-600 sm:text-lg">
+              Moments of worship, fellowship and service.
             </p>
           </motion.div>
 
           <Masonry
             breakpointCols={breakpointColumnsObj}
-            className="flex w-auto -ml-4"
-            columnClassName="pl-4 bg-clip-padding"
+            className="-ml-4 flex w-auto"
+            columnClassName="bg-clip-padding pl-4"
           >
-            {images.map((img, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
+            {images.map((img, index) => (
+              <motion.div
+                key={img}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  delay: (index % 3) * 0.08,
+                }}
+                viewport={{ once: true, amount: 0.1 }}
                 className="mb-4"
               >
-                <img 
-                  src={img} 
-                  alt={`Church activity ${i+1}`} 
-                  className="rounded-lg shadow-md w-full h-auto object-cover transition-transform duration-300 hover:scale-105" 
-                />
+                <div className="group relative overflow-hidden rounded-2xl bg-gray-200 shadow-sm">
+                  <img
+                    src={img}
+                    alt={`Reconciliation Church of God gallery photo ${index + 1}`}
+                    loading="lazy"
+                    className="h-auto w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#102844]/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </div>
               </motion.div>
             ))}
           </Masonry>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-amber-600 to-amber-700 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl font-bold font-serif mb-6">Join Our Church Family</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Experience God's love and grow in faith with us. We welcome you to be part of our community.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              {/* <button className="px-6 py-3 bg-white text-amber-700 hover:bg-gray-100 font-semibold rounded-lg shadow-md transition-colors">
-                Plan Your Visit
-              </button>
-              <button className="px-6 py-3 bg-transparent border-2 border-white hover:bg-white hover:text-amber-700 font-semibold rounded-lg transition-colors">
-                Learn More
-              </button> */}
-            </div>
-          </motion.div>
-        </div>
+      {/* Call to action */}
+      <section className="relative isolate overflow-hidden bg-[#17365D] py-16 text-white sm:py-20 lg:py-24">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#102844] via-[#17365D] to-[#243F67]" />
+        <div className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-[#B42332]/25 blur-3xl" />
+        <div className="absolute -bottom-28 -left-20 -z-10 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65 }}
+          viewport={{ once: true }}
+          className="mx-auto max-w-4xl px-5 text-center sm:px-8"
+        >
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10">
+            <FaChurch className="text-3xl text-red-300" />
+          </div>
+
+          <h2 className="font-serif text-3xl font-bold sm:text-4xl md:text-5xl">
+            Join Our Church Family
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-blue-100 sm:text-lg">
+            Experience God's love and grow in faith with us. We welcome you to
+            be part of our community.
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+            <Link
+              to="/newmember"
+              className="inline-flex items-center justify-center gap-3 rounded-xl bg-[#B42332] px-7 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-[#941D2A] hover:shadow-xl"
+            >
+              Become a Member
+              <FaArrowRight />
+            </Link>
+
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center gap-3 rounded-xl border border-white/40 bg-white/5 px-7 py-3.5 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#17365D]"
+            >
+              Contact Us
+              <FaArrowRight />
+            </Link>
+          </div>
+        </motion.div>
       </section>
-    </div>
+    </main>
   );
 };
 

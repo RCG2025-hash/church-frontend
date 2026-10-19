@@ -1,289 +1,379 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
 import {
-    FaBell,
-    FaSearch,
-    FaUserCircle,
-    FaEnvelope,
-    FaUsers,
-    FaHandsHelping,
-    FaCheck,
+  FaBell,
+  FaSearch,
+  FaUserCircle,
+  FaEnvelope,
+  FaUsers,
+  FaHandsHelping,
+  FaCheck,
+  FaShieldAlt,
+  FaTimes,
+  FaInbox,
 } from "react-icons/fa";
 
 const Topbar = ({
-    notifications = [],
-    unreadNotifications = [],
-    onNotificationClick,
-    onMarkAllRead,
+  notifications = [],
+  unreadNotifications = [],
+  onNotificationClick,
+  onMarkAllRead,
 }) => {
-    const [currentTime, setCurrentTime] = useState("");
-    const [showNotifications, setShowNotifications] = useState(false);
+  const [currentTime, setCurrentTime] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-    useEffect(() => {
-        const updateClock = () => {
-            const now = new Date();
-
-            setCurrentTime(
-                now.toLocaleString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                })
-            );
-        };
-
-        updateClock();
-
-        const timer = setInterval(updateClock, 1000 * 60);
-
-        return () => clearInterval(timer);
-    }, []);
-
-    const getNotificationIcon = (type) => {
-        if (type === "member") {
-            return <FaUsers className="text-green-600" />;
-        }
-
-        if (type === "workforce") {
-            return <FaHandsHelping className="text-amber-600" />;
-        }
-
-        return <FaEnvelope className="text-blue-600" />;
+  useEffect(() => {
+    const updateClock = () => {
+      setCurrentTime(
+        new Date().toLocaleString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     };
 
-    const formatDate = (date) => {
-        if (!date) return "";
+    updateClock();
 
-        const parsedDate = new Date(date);
+    const timer = setInterval(updateClock, 60000);
 
-        if (Number.isNaN(parsedDate.getTime())) {
-            return "";
-        }
+    return () => clearInterval(timer);
+  }, []);
 
-        return parsedDate.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
-
-    const handleNotificationClick = (notification) => {
-        if (onNotificationClick) {
-            onNotificationClick(notification);
-        }
-
+  // Close the dropdown when Escape is pressed.
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
         setShowNotifications(false);
+      }
     };
 
-    return (
-        <header className="bg-white shadow-md px-8 py-5 flex justify-between items-center">
+    window.addEventListener("keydown", handleKeyDown);
 
-            {/* LEFT SIDE */}
-            <div>
-                <h1 className="text-3xl font-bold text-gray-800">
-                    Admin Dashboard
-                </h1>
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
-                <p className="text-gray-500 mt-1">
-                    {currentTime}
-                </p>
+  const getNotificationIcon = (type) => {
+    if (type === "member") {
+      return <FaUsers className="text-blue-700" />;
+    }
+
+    if (type === "workforce") {
+      return <FaHandsHelping className="text-red-600" />;
+    }
+
+    return <FaEnvelope className="text-indigo-600" />;
+  };
+
+  const getNotificationStyle = (type) => {
+    if (type === "member") return "bg-blue-50";
+    if (type === "workforce") return "bg-red-50";
+    return "bg-indigo-50";
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "";
+    }
+
+    return parsedDate.toLocaleString("en-GB", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const filteredNotifications = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+
+    if (!term) return notifications;
+
+    return notifications.filter((notification) =>
+      [
+        notification.title,
+        notification.message,
+        notification.type,
+      ]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(term))
+    );
+  }, [notifications, searchTerm]);
+
+  const handleNotificationClick = (notification) => {
+    if (onNotificationClick) {
+      onNotificationClick(notification);
+    }
+
+    setShowNotifications(false);
+  };
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 px-4 py-4 shadow-sm backdrop-blur-md sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between gap-3">
+        {/* Left side: page identity */}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="hidden h-9 w-1 rounded-full bg-red-600 sm:block" />
+
+            <div className="min-w-0">
+              <h1 className="truncate text-lg font-bold tracking-tight text-[#0b1f46] sm:text-xl lg:text-2xl">
+                Church Administration
+              </h1>
+
+              <p className="mt-1 hidden text-xs text-slate-500 sm:block sm:text-sm">
+                {currentTime}
+              </p>
             </div>
+          </div>
+        </div>
 
-            {/* RIGHT SIDE */}
-            <div className="flex items-center gap-6">
+        {/* Right side */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
+          {/* Search */}
+          <div className="relative hidden md:block">
+            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
 
-                {/* SEARCH */}
-                <div className="relative">
-                    <FaSearch className="absolute left-4 top-4 text-gray-400" />
+            <input
+              type="search"
+              aria-label="Search notifications"
+              placeholder="Search notifications..."
+              value={searchTerm}
+              onChange={(event) => {
+                setSearchTerm(event.target.value);
+                setShowNotifications(true);
+              }}
+              onFocus={() => {
+                if (searchTerm.trim()) {
+                  setShowNotifications(true);
+                }
+              }}
+              className="w-48 rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-700 focus:bg-white focus:ring-4 focus:ring-blue-100 lg:w-64"
+            />
+          </div>
 
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 w-72"
-                    />
-                </div>
+          {/* Notifications */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() =>
+                setShowNotifications((previous) => !previous)
+              }
+              aria-label={`Notifications, ${unreadNotifications.length} unread`}
+              aria-expanded={showNotifications}
+              aria-haspopup="true"
+              className={`relative flex h-11 w-11 items-center justify-center rounded-xl border transition ${
+                showNotifications
+                  ? "border-blue-200 bg-blue-50 text-[#0b1f46]"
+                  : "border-slate-200 bg-white text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-[#0b1f46]"
+              }`}
+              title="Notifications"
+            >
+              <FaBell className="text-lg" />
 
-                {/* NOTIFICATION */}
-                <div className="relative">
+              {unreadNotifications.length > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-600 px-1 text-[10px] font-bold text-white">
+                  {unreadNotifications.length > 99
+                    ? "99+"
+                    : unreadNotifications.length}
+                </span>
+              )}
+            </button>
 
-                    <button
-                        onClick={() =>
-                            setShowNotifications(
-                                !showNotifications
-                            )
-                        }
-                        className="relative p-2"
-                        title="Notifications"
-                    >
-                        <FaBell className="text-2xl text-gray-600 hover:text-amber-600 transition" />
+            {/* Notification dropdown */}
+            {showNotifications && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Close notifications"
+                  className="fixed inset-0 z-40 cursor-default bg-slate-950/10"
+                  onClick={() => setShowNotifications(false)}
+                />
 
-                        {unreadNotifications.length > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
-                                {unreadNotifications.length > 99
-                                    ? "99+"
-                                    : unreadNotifications.length}
-                            </span>
-                        )}
-                    </button>
-
-                    {/* NOTIFICATION DROPDOWN */}
-                    {showNotifications && (
-                        <div className="absolute right-0 mt-3 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden">
-
-                            {/* HEADER */}
-                            <div className="flex justify-between items-center px-5 py-4 border-b bg-gray-50">
-
-                                <div>
-                                    <h3 className="font-bold text-gray-800">
-                                        Notifications
-                                    </h3>
-
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        {unreadNotifications.length} unread
-                                    </p>
-                                </div>
-
-                                {unreadNotifications.length > 0 && (
-                                    <button
-                                        onClick={onMarkAllRead}
-                                        className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1"
-                                    >
-                                        <FaCheck />
-
-                                        Mark all read
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* NOTIFICATIONS */}
-                            <div className="max-h-96 overflow-y-auto">
-
-                                {notifications.length === 0 ? (
-                                    <div className="py-10 text-center text-gray-500">
-
-                                        <FaBell className="mx-auto text-3xl text-gray-300 mb-3" />
-
-                                        <p>
-                                            No notifications yet.
-                                        </p>
-
-                                    </div>
-                                ) : (
-                                    notifications
-                                        .slice(0, 20)
-                                        .map((notification) => {
-
-                                            const isUnread =
-                                                unreadNotifications.some(
-                                                    (item) =>
-                                                        item.id ===
-                                                        notification.id
-                                                );
-
-                                            return (
-                                                <button
-                                                    key={notification.id}
-                                                    onClick={() =>
-                                                        handleNotificationClick(
-                                                            notification
-                                                        )
-                                                    }
-                                                    className={`w-full text-left px-5 py-4 border-b hover:bg-gray-50 transition flex gap-4 ${
-                                                        isUnread
-                                                            ? "bg-amber-50"
-                                                            : "bg-white"
-                                                    }`}
-                                                >
-
-                                                    {/* ICON */}
-                                                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                                        {getNotificationIcon(
-                                                            notification.type
-                                                        )}
-                                                    </div>
-
-                                                    {/* CONTENT */}
-                                                    <div className="flex-1 min-w-0">
-
-                                                        <div className="flex justify-between gap-2">
-
-                                                            <h4
-                                                                className={`text-sm ${
-                                                                    isUnread
-                                                                        ? "font-bold text-gray-800"
-                                                                        : "font-semibold text-gray-700"
-                                                                }`}
-                                                            >
-                                                                {
-                                                                    notification.title
-                                                                }
-                                                            </h4>
-
-                                                            {isUnread && (
-                                                                <span className="w-2 h-2 bg-red-600 rounded-full mt-1 flex-shrink-0"></span>
-                                                            )}
-
-                                                        </div>
-
-                                                        <p className="text-sm text-gray-600 truncate mt-1">
-                                                            {
-                                                                notification.message
-                                                            }
-                                                        </p>
-
-                                                        <p className="text-xs text-gray-400 mt-1">
-                                                            {formatDate(
-                                                                notification.createdAt
-                                                            )}
-                                                        </p>
-
-                                                    </div>
-
-                                                </button>
-                                            );
-                                        })
-                                )}
-
-                            </div>
-
-                            {/* FOOTER */}
-                            {notifications.length > 20 && (
-                                <div className="px-5 py-3 text-center border-t bg-gray-50">
-                                    <p className="text-xs text-gray-500">
-                                        Showing the latest 20
-                                        notifications
-                                    </p>
-                                </div>
-                            )}
-
-                        </div>
-                    )}
-
-                </div>
-
-                {/* ADMIN */}
-                <div className="flex items-center gap-3">
-
-                    <FaUserCircle className="text-5xl text-gray-600" />
-
+                <div className="fixed left-3 right-3 top-20 z-50 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-3 sm:max-h-[min(520px,75vh)] sm:w-[400px]">
+                  {/* Dropdown header */}
+                  <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-4 sm:px-5">
                     <div>
-                        <h3 className="font-semibold">
-                            Administrator
-                        </h3>
+                      <h2 className="font-bold text-[#0b1f46]">
+                        Notifications
+                      </h2>
 
-                        <p className="text-sm text-gray-500">
-                            Church Admin
-                        </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        {unreadNotifications.length} unread{" "}
+                        {unreadNotifications.length === 1
+                          ? "notification"
+                          : "notifications"}
+                      </p>
                     </div>
 
-                </div>
+                    <div className="flex items-center gap-2">
+                      {unreadNotifications.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={onMarkAllRead}
+                          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-2 text-xs font-semibold text-[#0b1f46] transition hover:bg-blue-50 hover:text-red-600"
+                        >
+                          <FaCheck />
+                          <span className="hidden xs:inline">
+                            Mark all read
+                          </span>
+                          <span className="xs:hidden">
+                            Mark read
+                          </span>
+                        </button>
+                      )}
 
+                      <button
+                        type="button"
+                        onClick={() => setShowNotifications(false)}
+                        aria-label="Close notifications"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-200 hover:text-slate-700"
+                      >
+                        <FaTimes />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Search on small screens */}
+                  <div className="border-b border-slate-100 px-4 py-3 md:hidden">
+                    <div className="relative">
+                      <FaSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+
+                      <input
+                        type="search"
+                        aria-label="Search notifications"
+                        placeholder="Search notifications..."
+                        value={searchTerm}
+                        onChange={(event) =>
+                          setSearchTerm(event.target.value)
+                        }
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Notification list */}
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    {filteredNotifications.length === 0 ? (
+                      <div className="px-6 py-12 text-center">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#0b1f46]">
+                          <FaInbox className="text-2xl" />
+                        </div>
+
+                        <h3 className="mt-4 font-semibold text-slate-700">
+                          {searchTerm.trim()
+                            ? "No matching notifications"
+                            : "You're all caught up"}
+                        </h3>
+
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          {searchTerm.trim()
+                            ? "Try another search term."
+                            : "New messages and registrations will appear here."}
+                        </p>
+                      </div>
+                    ) : (
+                      filteredNotifications
+                        .slice(0, 20)
+                        .map((notification) => {
+                          const isUnread = unreadNotifications.some(
+                            (item) => item.id === notification.id
+                          );
+
+                          return (
+                            <button
+                              key={notification.id}
+                              type="button"
+                              onClick={() =>
+                                handleNotificationClick(notification)
+                              }
+                              className={`flex w-full gap-3 border-b border-slate-100 px-4 py-4 text-left transition hover:bg-slate-50 sm:px-5 ${
+                                isUnread ? "bg-blue-50/60" : "bg-white"
+                              }`}
+                            >
+                              <div
+                                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${getNotificationStyle(
+                                  notification.type
+                                )}`}
+                              >
+                                {getNotificationIcon(notification.type)}
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h3
+                                    className={`text-sm ${
+                                      isUnread
+                                        ? "font-bold text-[#0b1f46]"
+                                        : "font-semibold text-slate-700"
+                                    }`}
+                                  >
+                                    {notification.title}
+                                  </h3>
+
+                                  {isUnread && (
+                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-red-600" />
+                                  )}
+                                </div>
+
+                                <p className="mt-1 truncate text-sm text-slate-600">
+                                  {notification.message}
+                                </p>
+
+                                <p className="mt-2 text-xs text-slate-400">
+                                  {formatDate(notification.createdAt)}
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })
+                    )}
+                  </div>
+
+                  {/* Dropdown footer */}
+                  {filteredNotifications.length > 20 && (
+                    <div className="border-t border-slate-100 bg-slate-50 px-4 py-3 text-center">
+                      <p className="text-xs text-slate-500">
+                        Showing the latest 20 matching notifications
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Administrator profile */}
+          <div className="flex items-center gap-2 border-l border-slate-200 pl-3 sm:gap-3 sm:pl-5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0b1f46] text-white ring-4 ring-blue-50 sm:h-11 sm:w-11">
+              <FaUserCircle className="text-2xl" />
             </div>
-        </header>
-    );
+
+            <div className="hidden min-w-0 lg:block">
+              <p className="text-sm font-bold text-[#0b1f46]">
+                Administrator
+              </p>
+
+              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-slate-500">
+                <FaShieldAlt className="text-red-500" />
+                Church Admin
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 };
 
 export default Topbar;

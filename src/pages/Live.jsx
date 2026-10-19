@@ -1,289 +1,434 @@
-import React, { useState, useEffect } from 'react';
+
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaTiktok } from "react-icons/fa6";
-import { 
-  FaYoutube, 
-  FaFacebook, 
-  FaInstagram, 
+import {
+  FaYoutube,
+  FaFacebook,
+  FaInstagram,
   FaChurch,
   FaClock,
   FaCalendarAlt,
-  FaPray,
-  FaUsers
-} from 'react-icons/fa';
+  FaArrowRight,
+  FaExternalLinkAlt,
+  FaWifi,
+  FaEnvelope,
+  FaPlay,
+} from "react-icons/fa";
+import { FaTiktok } from "react-icons/fa6";
 
-const Live = () => {
-  const [isLive, setIsLive] = useState(false);
-  const [nextService, setNextService] = useState(null);
+const streamingPlatforms = [
+  {
+    name: "Facebook",
+    icon: FaFacebook,
+    url: "https://www.facebook.com/share/1CpmwGazKi/",
+    description: "Join our Facebook page for live services and church updates.",
+    available: true,
+    featured: true,
+    iconColor: "text-blue-600",
+  },
+  {
+    name: "YouTube",
+    icon: FaYoutube,
+    url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
+    description: "Visit our YouTube channel for available church videos.",
+    available: true,
+    featured: false,
+    iconColor: "text-red-600",
+  },
+  {
+    name: "TikTok",
+    icon: FaTiktok,
+    url: "https://www.tiktok.com/@rcghisgrace?_r=1&_t=ZP-95mCrms8szW",
+    description: "Follow our TikTok page for church content and updates.",
+    available: true,
+    featured: false,
+    iconColor: "text-gray-900",
+  },
+  {
+    name: "Instagram",
+    icon: FaInstagram,
+    url: "",
+    description: "Our Instagram live link is not available yet.",
+    available: false,
+    featured: false,
+    iconColor: "text-pink-600",
+  },
+];
 
-  // Simulate live status - replace with actual logic
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
+};
+
+function getNextSundayService() {
+  const now = new Date();
+  const service = new Date(now);
+
+  // Sunday is day 0. Select today's service only if it has not started.
+  let daysUntilSunday = (7 - now.getDay()) % 7;
+
+  service.setDate(now.getDate() + daysUntilSunday);
+  service.setHours(8, 30, 0, 0);
+
+  if (service <= now) {
+    service.setDate(service.getDate() + 7);
+  }
+
+  return service;
+}
+
+function formatServiceDate(date) {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const sameDay = (first, second) =>
+    first.getFullYear() === second.getFullYear() &&
+    first.getMonth() === second.getMonth() &&
+    first.getDate() === second.getDate();
+
+  if (sameDay(date, today)) return "Today";
+  if (sameDay(date, tomorrow)) return "Tomorrow";
+
+  return date.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function Live() {
+  const [nextService, setNextService] = useState(() =>
+    getNextSundayService()
+  );
+
   useEffect(() => {
-    // Check if current time is during service hours
-    const checkLiveStatus = () => {
-      const now = new Date();
-      const day = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      
-      // Sunday services at 8:30 AM and 11:30 AM
-      if (day === 0 && (hours >= 8 && hours < 12) || (hours === 8 && minutes >= 30)) {
-        setIsLive(true);
-      } else {
-        setIsLive(false);
-      }
-    };
+    // Refresh the next service time periodically in case the page stays open.
+    const refreshService = () => setNextService(getNextSundayService());
 
-    checkLiveStatus();
-    const interval = setInterval(checkLiveStatus, 60000); // Check every minute
+    const interval = window.setInterval(refreshService, 60000);
 
-    return () => clearInterval(interval);
+    return () => window.clearInterval(interval);
   }, []);
 
-  // Calculate next service time
-  // useEffect(() => {
-  //   const now = new Date();
-  //   const day = now.getDay();
-  //   const hours = now.getHours();
-    
-  //   let nextServiceDate = new Date();
-    
-  //   // If it's Sunday afternoon or any other day
-  //   if (day === 0 && hours >= 12) {
-  //     nextServiceDate.setDate(now.getDate() + (7 - day));
-  //   } else if (day !== 0) {
-  //     nextServiceDate.setDate(now.getDate() + (7 - day) % 7);
-  //   }
-    
-  //   // Set time to 8:00 AM
-  //   nextServiceDate.setHours(8, 0, 0, 0);
-    
-  //   setNextService(nextServiceDate);
-  // }, []);
-
-  const streamingPlatforms = [
-    {
-      name: "YouTube",
-      icon: FaYoutube,
-      url: "https://www.youtube.com/channel/UCxWcOs-pauiAXgDE_59uPww",
-      color: "bg-red-600 hover:bg-red-700",
-      description: "Watch our HD stream on YouTube"
-    },
-    {
-      name: "Facebook",
-      icon: FaFacebook,
-      url: "https://www.facebook.com/share/1CpmwGazKi/",
-      color: "bg-blue-600 hover:bg-blue-700",
-      description: "Join our Facebook Live stream"
-    },
-    {
-      name: "Instagram",
-      icon: FaInstagram,
-      url: "",
-      color: "bg-pink-600 hover:bg-pink-700",
-      description: "Follow us on Instagram Live"
-    },
-    {
-      name: "TikTok",
-      icon: FaTiktok,
-      url: "https://www.tiktok.com/@rcghisgrace?_r=1&_t=ZP-95mCrms8szW",
-      color: "bg-blue-500 hover:bg-blue-600",
-      description: "Follow us on TikTok"
-    }
-  ];
-
-  const serviceTimes = [
-    { day: "Sunday", times: "8:30 AM & 11:30 AM", type: "Worship Service" },
-    { day: "Tuesday", times: "6:30 PM", type: "Bible Study" },
-    { day: "Friday", times: "7:00 PM", type: "Prayer Meeting" },
-    { day: "Saturday", times: "4:00 PM", type: "Youth Service" }
-  ];
-
   return (
-    <section id="live" className="min-h-screen pt-20 bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-amber-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold font-serif mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+    <main className="min-h-screen overflow-hidden bg-white pt-20">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-[#102844] py-20 text-white sm:py-24 lg:py-28">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#102844] via-[#17365D] to-[#263D60]" />
+        <div className="absolute -right-20 -top-20 -z-10 h-80 w-80 rounded-full bg-[#B42332]/25 blur-3xl" />
+        <div className="absolute -bottom-24 -left-20 -z-10 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
+
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+          className="mx-auto max-w-7xl px-5 text-center sm:px-8 lg:px-12"
+        >
+          <motion.div
+            variants={fadeUp}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"
           >
-            Join Us Live
+            <FaChurch className="text-red-300" />
+            Reconciliation Church of God Intl.
+          </motion.div>
+
+          <motion.h1
+            variants={fadeUp}
+            className="font-serif text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
+          >
+            Worship With Us
+            <span className="block text-red-300">From Anywhere</span>
           </motion.h1>
-          <motion.p 
-            className="text-xl md:text-2xl max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+
+          <motion.p
+            variants={fadeUp}
+            className="mx-auto mt-6 max-w-3xl text-base leading-8 text-blue-100 sm:text-lg md:text-xl"
           >
-            Worship with us from anywhere in the world
+            Stay connected to our church family through online services,
+            worship, and spiritual messages.
           </motion.p>
-          <motion.div 
-            className="flex justify-center mt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            <FaChurch className="text-4xl text-amber-400" />
-          </motion.div>
-        </div>
-      </div>
 
-      {/* Live Status Banner */}
-      <div className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className={`rounded-xl p-6 text-center ${
-              isLive 
-                ? "bg-red-100 border border-red-300 text-red-800" 
-                : "bg-blue-100 border border-blue-300 text-blue-800"
-            }`}
+          <motion.div
+            variants={fadeUp}
+            className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <div className="flex items-center justify-center mb-2">
-              <div className={`w-3 h-3 rounded-full mr-3 ${isLive ? "bg-red-600 animate-pulse" : "bg-blue-600"}`}></div>
-              <h2 className="text-2xl font-bold">
-                {isLive ? "LIVE NOW" : "OFFLINE"}
-              </h2>
+            <a
+              href={streamingPlatforms[0].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-[#B42332] px-7 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-[#941D2A] sm:w-auto"
+            >
+              <FaPlay />
+              Visit Facebook Live
+              <FaExternalLinkAlt className="text-xs" />
+            </a>
+
+            <a
+              href={streamingPlatforms[1].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-white/30 bg-white/10 px-7 py-3.5 font-semibold text-white transition-all duration-300 hover:bg-white/20 sm:w-auto"
+            >
+              <FaYoutube className="text-xl" />
+              Visit YouTube
+            </a>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Streaming status */}
+      <section className="px-5 pt-10 sm:px-8 sm:pt-14">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto max-w-7xl overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm"
+        >
+          <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
+                <FaWifi className="text-2xl text-[#17365D]" />
+              </div>
+
+              <div>
+                <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gray-600">
+                  <span className="h-2 w-2 rounded-full bg-gray-400" />
+                  Stream status unconfirmed
+                </span>
+
+                <h2 className="mt-3 text-xl font-bold text-[#17365D] sm:text-2xl">
+                  Join Our Online Service
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-sm leading-7 text-gray-600 sm:text-base">
+                  We cannot automatically verify whether a broadcast is
+                  currently live. Visit our Facebook page to check for the
+                  current service.
+                </p>
+              </div>
             </div>
-            <p className="text-lg">
-              {isLive 
-                ? "We're live! Join our current service."
-                : nextService && `Next service: Sunday at 8:30 AM`
-              }
-            </p>
-          </motion.div>
-        </div>
-      </div>
 
-      {/* Streaming Platforms */}
-      <div className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Watch Live On</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Please join the live service using the facebook link. we are working on getting other platforms up and running.
-            </p>
-          </motion.div>
+            <a
+              href={streamingPlatforms[0].url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#17365D] px-5 py-3 font-semibold text-white transition-colors hover:bg-[#B42332]"
+            >
+              Check Facebook
+              <FaArrowRight />
+            </a>
+          </div>
+        </motion.div>
+      </section>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {streamingPlatforms.map((platform, index) => (
-              <motion.a
-                key={platform.name}
-                href={platform.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`${platform.color} text-white rounded-xl p-6 text-center shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+      {/* Next service */}
+      <section className="px-5 py-14 sm:px-8 sm:py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto max-w-7xl"
+        >
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-2xl bg-[#17365D] p-6 text-white sm:p-8">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10">
+                <FaCalendarAlt className="text-xl text-red-300" />
+              </div>
+
+              <p className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-blue-200">
+                Next Sunday Service
+              </p>
+
+              <h2 className="mt-3 font-serif text-2xl font-bold sm:text-3xl">
+                {formatServiceDate(nextService)}
+              </h2>
+
+              <div className="mt-5 flex items-center gap-3 text-blue-100">
+                <FaClock className="text-red-300" />
+                <span>8:30 AM</span>
+              </div>
+
+              <p className="mt-4 text-sm leading-7 text-blue-100">
+                Local time. Check our Facebook page closer to the service
+                for live-stream availability.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6 sm:p-8">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50">
+                <FaChurch className="text-xl text-[#B42332]" />
+              </div>
+
+              <h2 className="mt-6 font-serif text-2xl font-bold text-[#17365D] sm:text-3xl">
+                Worship Together
+              </h2>
+
+              <p className="mt-4 leading-8 text-gray-600">
+                Whether you are at home or far away, we invite you to connect
+                with our church family and participate in our online services
+                whenever a stream is available.
+              </p>
+
+              <Link
+                to="/contact"
+                className="mt-5 inline-flex items-center gap-2 font-semibold text-[#B42332] transition-colors hover:text-[#17365D]"
               >
-                <platform.icon className="text-4xl mx-auto mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{platform.name}</h3>
-                <p className="text-sm opacity-90">{platform.description}</p>
-                <div className="mt-4">
-                  <span className="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm">
-                    {isLive ? "Join Now" : "View Channel"}
-                  </span>
-                </div>
-              </motion.a>
-            ))}
+                Contact the Church
+                <FaArrowRight />
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Streaming platforms */}
+      <section className="bg-gray-50 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="mb-12 text-center"
+          >
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+              Stay Connected
+            </p>
+
+            <h2 className="font-serif text-3xl font-bold text-[#17365D] sm:text-4xl">
+              Find Us Online
+            </h2>
+
+            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-[#B42332]" />
+
+            <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-gray-600 sm:text-lg">
+              Please use our Facebook link for live services. Other platforms
+              may have different content or may not yet be fully active.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {streamingPlatforms.map((platform, index) => {
+              const Icon = platform.icon;
+
+              const card = (
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.15 }}
+                  transition={{ duration: 0.5, delay: index * 0.08 }}
+                  whileHover={platform.available ? { y: -6 } : {}}
+                  className={`flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition-all duration-300 ${
+                    platform.available
+                      ? "border-gray-100 hover:border-blue-100 hover:shadow-xl"
+                      : "border-dashed border-gray-200 opacity-80"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50">
+                      <Icon className={`text-3xl ${platform.iconColor}`} />
+                    </div>
+
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold ${
+                        platform.available
+                          ? "bg-green-50 text-green-700"
+                          : "bg-gray-100 text-gray-500"
+                      }`}
+                    >
+                      {platform.available ? "Available" : "Coming soon"}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-bold text-[#17365D]">
+                    {platform.name}
+                  </h3>
+
+                  <p className="mt-3 flex-1 text-sm leading-7 text-gray-600">
+                    {platform.description}
+                  </p>
+
+                  <div
+                    className={`mt-6 inline-flex items-center gap-2 font-semibold ${
+                      platform.available
+                        ? "text-[#B42332]"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {platform.available ? "Visit page" : "Not available yet"}
+                    {platform.available && <FaArrowRight />}
+                  </div>
+                </motion.div>
+              );
+
+              return platform.available ? (
+                <a
+                  key={platform.name}
+                  href={platform.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Visit our ${platform.name} page`}
+                  className="block rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#B42332] focus:ring-offset-2"
+                >
+                  {card}
+                </a>
+              ) : (
+                <div key={platform.name}>{card}</div>
+              );
+            })}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Service Schedule */}
-      {/* <div className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 font-serif mb-4">Service Schedule</h2>
-            <div className="w-24 h-1 bg-amber-600 mx-auto mb-6"></div>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Join us for worship throughout the week
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {serviceTimes.map((service, index) => (
-              <motion.div
-                key={service.day}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-50 p-6 rounded-xl text-center"
-              >
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  {service.type.includes("Prayer") && <FaPray className="text-amber-600 text-xl" />}
-                  {service.type.includes("Bible") && <FaChurch className="text-amber-600 text-xl" />}
-                  {service.type.includes("Youth") && <FaUsers className="text-amber-600 text-xl" />}
-                  {service.type.includes("Worship") && <FaCalendarAlt className="text-amber-600 text-xl" />}
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.day}</h3>
-                <p className="text-amber-600 font-medium mb-2">{service.times}</p>
-                <p className="text-gray-600 text-sm">{service.type}</p>
-              </motion.div>
-            ))}
+      {/* Help section */}
+      <section className="bg-white px-5 py-16 sm:px-8 sm:py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto max-w-5xl rounded-3xl border border-blue-100 bg-blue-50/70 p-7 text-center sm:p-10 lg:p-14"
+        >
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+            <FaEnvelope className="text-2xl text-[#B42332]" />
           </div>
-        </div>
-      </div> */}
 
-      {/* Connection Tips */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+          <p className="mb-3 mt-5 text-sm font-bold uppercase tracking-[0.2em] text-[#B42332]">
+            We're Here to Help
+          </p>
+
+          <h2 className="font-serif text-2xl font-bold text-[#17365D] sm:text-3xl md:text-4xl">
+            Need Help Connecting?
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl leading-7 text-gray-600 sm:text-lg">
+            If you experience difficulties joining our online services, you
+            can contact our listed technical support email.
+          </p>
+
+          <a
+            href="mailto:help@hisgracercg.org"
+            className="mt-7 inline-flex items-center justify-center gap-3 rounded-xl bg-[#17365D] px-6 py-3.5 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#B42332]"
           >
-            <h2 className="text-3xl font-bold text-gray-900 font-serif mb-6">Need Help Connecting?</h2>
-            <p className="text-xl text-gray-700 mb-8">
-              If you're having trouble joining our live stream, please contact our tech support team at{" "}
-              <a href="mailto:help@hisgracercg.org" className="text-amber-600 hover:text-amber-700 font-medium">
-                help@hisgracercg.org
-              </a>
-            </p>
-            {/* <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Tips:</h3>
-              <ul className="text-gray-700 space-y-2 text-left max-w-md mx-auto">
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-amber-600 rounded-full mr-3"></div>
-                  Ensure you have a stable internet connection
-                </li>
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-amber-600 rounded-full mr-3"></div>
-                  Use headphones for better audio quality
-                </li>
-                <li className="flex items-center">
-                  <div className="w-2 h-2 bg-amber-600 rounded-full mr-3"></div>
-                  Join 5-10 minutes before service time
-                </li>
-              </ul>
-            </div> */}
-          </motion.div>
-        </div>
-      </div>
-    </section>
+            <FaEnvelope />
+            Email Technical Support
+          </a>
+        </motion.div>
+      </section>
+    </main>
   );
-};
+}
 
 export default Live;
