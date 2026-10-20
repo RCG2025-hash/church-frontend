@@ -158,7 +158,7 @@ const JoinWorkforce = () => {
   };
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden bg-[#0b1f46] text-white">
         <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-red-600/20 blur-3xl" />

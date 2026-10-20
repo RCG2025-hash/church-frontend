@@ -17,7 +17,7 @@ import Footer from "./components/Footer";
 import Preloader from "./components/Preloader";
 import ScrollToTop from "./components/ScrollToTop";
 import BackToTopButton from "./components/BackToTopButton";
-
+import SessionTimeout from "./components/SessionTimeout";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -74,7 +74,7 @@ const AppLayout = () => {
           onFinish={handlePreloaderFinish}
         />
       )}
-
+      <SessionTimeout />
       {/* Scroll to top when the route changes */}
       <ScrollToTop />
 

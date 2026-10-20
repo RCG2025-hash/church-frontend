@@ -145,7 +145,7 @@ const NewMember = () => {
     "mb-2 block text-sm font-semibold text-slate-700";
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden bg-[#0b1f46] text-white">
         <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-red-600/20 blur-3xl" />
@@ -196,7 +196,7 @@ const NewMember = () => {
             transition={{ duration: 0.6, delay: 0.35 }}
             className="mt-8 inline-flex items-center gap-3 rounded-lg bg-red-600 px-7 py-3.5 font-semibold text-white shadow-lg transition hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300/40"
           >
-            Register as a New Member
+           Join Us Now
             <FaArrowRight />
           </motion.a>
         </div>

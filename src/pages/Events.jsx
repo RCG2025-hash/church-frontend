@@ -341,7 +341,7 @@ function Events() {
   };
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white pt-20">
+    <main className="min-h-screen overflow-hidden bg-white">
       {/* Hero */}
       <section className="relative isolate overflow-hidden bg-[#102844] py-20 text-white sm:py-24">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#102844] via-[#17365D] to-[#263D60]" />
