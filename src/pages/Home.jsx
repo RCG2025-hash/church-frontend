@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 import BackToTopButton from "../components/BackToTopButton";
 import churchBanner from "../assets/Banner.jpg";
-import churchImage from "../assets/church_con.jpg";
+import churchImage from "../assets/convention_pics.jpg";
 
 const navy = "#17365D";
 const red = "#B42332";
